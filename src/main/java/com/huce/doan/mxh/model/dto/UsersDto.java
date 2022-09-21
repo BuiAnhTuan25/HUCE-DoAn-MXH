@@ -20,8 +20,6 @@ public class UsersDto {
 
     private String password;
 
-    private StatusEnum status;
-
     private Boolean isProfile;
 
     private String mail;

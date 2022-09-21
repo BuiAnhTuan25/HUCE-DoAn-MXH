@@ -25,6 +25,9 @@ public class ProfilesDto {
 
     private String address;
 
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
+
     @JsonProperty("is_public")
-    private Boolean is_public;
+    private Boolean isPublic;
 }
