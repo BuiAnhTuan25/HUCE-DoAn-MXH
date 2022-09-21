@@ -1,8 +1,8 @@
 package com.huce.doan.mxh.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.huce.doan.mxh.constains.ProviderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
+import com.huce.doan.mxh.model.dto.UsersDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Users {
+public class UsersEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,4 +45,16 @@ public class Users {
 
     @Column(name = "provider", unique = true)
     private ProviderEnum provider;
+
+    public UsersEntity mapperUsersDto(UsersDto user) {
+        this.id = user.getId();
+        this.isProfile = user.getIsProfile();
+        this.mail = user.getMail();
+        this.provider = user.getProvider();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.status = user.getStatus();
+
+        return this;
+    }
 }

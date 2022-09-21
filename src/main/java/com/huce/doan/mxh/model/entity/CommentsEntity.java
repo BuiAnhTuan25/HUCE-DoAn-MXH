@@ -6,14 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "comments")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Likes {
+public class CommentsEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,6 +23,15 @@ public class Likes {
     @Column(name = "post_id", unique = true)
     private Long postId;
 
-    @Column(name = "user_id", unique = true)
-    private Long userId;
+    @Column(name = "author_id", unique = true)
+    private Long authorId;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "picture_url")
+    private String pictureUrl;
+
+    @Column(name = "comment_time", unique = true)
+    private LocalDate commentTime;
 }
