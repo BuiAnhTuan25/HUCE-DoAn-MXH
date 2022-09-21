@@ -1,4 +1,4 @@
-package com.huce.doan.mxh.model.dto;
-
-public class NotificationsDto {
-}
+//package com.huce.doan.mxh.model.dto;
+//
+//public class NotificationsDto {
+//}

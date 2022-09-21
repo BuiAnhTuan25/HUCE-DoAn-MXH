@@ -1,4 +1,4 @@
-package com.huce.doan.mxh.service;
-
-public interface NotificationsService {
-}
+//package com.huce.doan.mxh.service;
+//
+//public interface NotificationsService {
+//}
