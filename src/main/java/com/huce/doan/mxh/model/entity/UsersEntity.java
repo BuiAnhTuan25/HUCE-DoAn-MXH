@@ -53,7 +53,6 @@ public class UsersEntity {
         this.provider = user.getProvider();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.status = user.getStatus();
 
         return this;
     }
