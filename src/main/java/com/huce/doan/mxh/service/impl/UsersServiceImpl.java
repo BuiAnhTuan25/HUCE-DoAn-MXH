@@ -6,20 +6,24 @@ import com.huce.doan.mxh.model.entity.UsersEntity;
 import com.huce.doan.mxh.model.response.Data;
 import com.huce.doan.mxh.model.response.Response;
 import com.huce.doan.mxh.repository.UsersRepository;
+import com.huce.doan.mxh.service.ProfilesService;
 import com.huce.doan.mxh.service.UsersService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 @Service
 @AllArgsConstructor
+@Transactional(rollbackOn = Exception.class)
 public class UsersServiceImpl implements UsersService {
 
     private UsersRepository usersRepository;
     private ModelMapper mapper;
     private Response response;
+    private ProfilesService profilesService;
 
     @Override
     public Data getUser(Long id) {
@@ -32,6 +36,7 @@ public class UsersServiceImpl implements UsersService {
     public Data createUser(UsersDto user) {
         UsersEntity userEntity = new UsersEntity().mapperUsersDto(user);
         userEntity.setStatus(StatusEnum.ACTIVE);
+        userEntity.setIsProfile(false);
 
         return response.responseData(mapper.map(usersRepository.save(userEntity), UsersDto.class));
     }
@@ -49,6 +54,9 @@ public class UsersServiceImpl implements UsersService {
         UsersEntity userEntity = usersRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         userEntity.setStatus(StatusEnum.INACTIVE);
         usersRepository.save(userEntity);
+        if(userEntity.getIsProfile()){
+            profilesService.deleteProfile(id);
+        }
 
         return response.responseData(mapper.map(userEntity, UsersDto.class));
     }

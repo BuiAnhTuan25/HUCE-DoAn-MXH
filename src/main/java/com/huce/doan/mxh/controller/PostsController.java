@@ -1,11 +1,58 @@
 package com.huce.doan.mxh.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.huce.doan.mxh.model.dto.PostsDto;
+import com.huce.doan.mxh.service.PostsService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
+@AllArgsConstructor
 @RequestMapping("api/v1.0/posts")
 public class PostsController {
+    private PostsService postsService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPost(
+            @PathVariable Long id
+    ){
+        return new ResponseEntity<>(postsService.getPost(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/author-id/{id}")
+    public ResponseEntity<?> getByAuthorId(
+            @PathVariable Long id,
+            @RequestParam(name="page") int page,
+            @RequestParam(name="page-size") int pageSize
+    ){
+        return new ResponseEntity<>(postsService.getByAuthorId(id,page,pageSize),HttpStatus.OK);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<?> createPost(
+            @ModelAttribute PostsDto post,
+            @RequestParam(name="picture",required = false) MultipartFile picture
+    ){
+        return new ResponseEntity<>(postsService.createPost(post, picture),HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePost(
+            @PathVariable Long id,
+            @ModelAttribute PostsDto post,
+            @RequestParam(name="picture",required = false) MultipartFile picture
+    ){
+        return new ResponseEntity<>(postsService.updatePost(post, picture, id),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(
+            @PathVariable Long id
+    ){
+        return new ResponseEntity<>(postsService.deletePost(id),HttpStatus.OK);
+    }
 }

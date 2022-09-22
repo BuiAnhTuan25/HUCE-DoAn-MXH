@@ -25,7 +25,7 @@ public class ProfilesController {
     @PostMapping("")
     public ResponseEntity<?> createProfile(
             @ModelAttribute ProfilesDto profile,
-            @RequestParam(required = false) MultipartFile avatar
+            @RequestParam(name="avatar",required = false) MultipartFile avatar
     ) {
         return new ResponseEntity<>(profilesService.createProfile(profile, avatar), HttpStatus.CREATED);
     }
@@ -33,7 +33,7 @@ public class ProfilesController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProfile(
             @ModelAttribute ProfilesDto profile,
-            @RequestParam(required = false) MultipartFile avatar,
+            @RequestParam(name="avatar",required = false) MultipartFile avatar,
             @PathVariable Long id
     ) {
         return new ResponseEntity<>(profilesService.updateProfile(profile, avatar, id), HttpStatus.OK);
