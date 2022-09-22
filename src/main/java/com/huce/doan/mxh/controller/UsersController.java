@@ -17,29 +17,29 @@ public class UsersController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(
             @PathVariable Long id
-    ){
+    ) {
         return new ResponseEntity<>(usersService.getUser(id), HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity<?> createUser(
             @RequestBody UsersDto user
-    ){
-        return new ResponseEntity<>(usersService.createUser(user),HttpStatus.CREATED);
+    ) {
+        return new ResponseEntity<>(usersService.createUser(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(
             @RequestBody UsersDto user,
             @PathVariable Long id
-    ){
-        return new ResponseEntity<>(usersService.updateUser(user,id),HttpStatus.OK);
+    ) {
+        return new ResponseEntity<>(usersService.updateUser(user, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(
             @PathVariable Long id
-    ){
-        return new ResponseEntity<>(usersService.deleteUser(id),HttpStatus.OK);
+    ) {
+        return new ResponseEntity<>(usersService.deleteUser(id), HttpStatus.OK);
     }
 }

@@ -54,7 +54,7 @@ public class UsersServiceImpl implements UsersService {
         UsersEntity userEntity = usersRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         userEntity.setStatus(StatusEnum.INACTIVE);
         usersRepository.save(userEntity);
-        if(userEntity.getIsProfile()){
+        if (userEntity.getIsProfile()) {
             profilesService.deleteProfile(id);
         }
 

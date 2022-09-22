@@ -1,6 +1,7 @@
 package com.huce.doan.mxh.model.entity;
 
 import com.huce.doan.mxh.constains.FriendStatusEnum;
+import com.huce.doan.mxh.model.dto.FriendsDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,18 @@ public class FriendsEntity {
     private Long meId;
 
     @Column(name = "friend_code", unique = true)
-    private Long friend_code;
+    private Long friendCode;
 
     @Column(name = "friend_status", unique = true)
     private FriendStatusEnum friendStatus;
+
+    public FriendsEntity mapperFriendsDto(FriendsDto friend){
+        this.id = friend.getId();
+        this.friendId = friend.getFriendId();
+        this.meId = friend.getMeId();
+        this.friendCode = friend.getFriendCode();
+        this.friendStatus = friend.getFriendStatus();
+
+        return this;
+    }
 }
