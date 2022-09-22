@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.model.entity;
 
+import com.huce.doan.mxh.model.dto.LikesDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,17 @@ public class LikesEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "post_id", unique = true)
+    @Column(name = "post_id")
     private Long postId;
 
-    @Column(name = "user_id", unique = true)
+    @Column(name = "user_id")
     private Long userId;
+
+    public LikesEntity mapperLikesDto(LikesDto like){
+        this.id = like.getId();
+        this.postId= like.getPostId();
+        this.userId = like.getUserId();
+
+        return this;
+    }
 }

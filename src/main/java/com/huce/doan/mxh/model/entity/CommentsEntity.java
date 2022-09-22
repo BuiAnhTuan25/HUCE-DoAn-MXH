@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -20,10 +20,10 @@ public class CommentsEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "post_id", unique = true)
+    @Column(name = "post_id")
     private Long postId;
 
-    @Column(name = "author_id", unique = true)
+    @Column(name = "author_id")
     private Long authorId;
 
     @Column(name = "content")
@@ -32,6 +32,6 @@ public class CommentsEntity {
     @Column(name = "picture_url")
     private String pictureUrl;
 
-    @Column(name = "comment_time", unique = true)
-    private LocalDate commentTime;
+    @Column(name = "comment_time")
+    private LocalDateTime commentTime;
 }

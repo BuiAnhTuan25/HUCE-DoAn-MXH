@@ -25,31 +25,31 @@ public class UsersEntity {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "status", unique = true)
+    @Column(name = "status")
     private StatusEnum status;
 
     @Column(name = "verification_code", length = 64)
     private String verificationCode;
 
-    @Column(name = "is_profile", unique = true)
+    @Column(name = "is_profile")
     private Boolean isProfile;
 
     @Column(name = "email", unique = true)
-    private String mail;
+    private String email;
 
     @Column(name = "update_password_token", length = 64)
     private String updatePasswordToken;
 
-    @Column(name = "provider", unique = true)
+    @Column(name = "provider")
     private ProviderEnum provider;
 
     public UsersEntity mapperUsersDto(UsersDto user) {
         this.id = user.getId();
         this.isProfile = user.getIsProfile();
-        this.mail = user.getMail();
+        this.email = user.getEmail();
         this.provider = user.getProvider();
         this.username = user.getUsername();
         this.password = user.getPassword();

@@ -20,10 +20,10 @@ import javax.transaction.Transactional;
 @Transactional(rollbackOn = Exception.class)
 public class UsersServiceImpl implements UsersService {
 
-    private UsersRepository usersRepository;
-    private ModelMapper mapper;
-    private Response response;
-    private ProfilesService profilesService;
+    private final UsersRepository usersRepository;
+    private final ModelMapper mapper;
+    private final Response response;
+    private final ProfilesService profilesService;
 
     @Override
     public Data getUser(Long id) {

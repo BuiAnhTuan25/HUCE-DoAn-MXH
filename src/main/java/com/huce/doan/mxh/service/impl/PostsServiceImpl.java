@@ -26,10 +26,10 @@ import java.util.Map;
 @AllArgsConstructor
 public class PostsServiceImpl implements PostsService {
 
-    private PostsRepository postsRepository;
-    private ModelMapper mapper;
-    private Cloudinary cloudinary;
-    private Response response;
+    private final PostsRepository postsRepository;
+    private final ModelMapper mapper;
+    private final Cloudinary cloudinary;
+    private final Response response;
 
     @Override
     public Data getPost(Long id) {

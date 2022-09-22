@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,5 +27,5 @@ public class CommentsDto {
     private String pictureUrl;
 
     @JsonProperty("comment_time")
-    private LocalDate commentTime;
+    private LocalDateTime commentTime;
 }

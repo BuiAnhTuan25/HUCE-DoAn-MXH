@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("api/v1.0/users")
 public class UsersController {
-    private UsersService usersService;
+    private final UsersService usersService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(

@@ -24,10 +24,10 @@ import java.util.Random;
 @AllArgsConstructor
 @Transactional(rollbackOn = Exception.class)
 public class FriendsServiceImpl implements FriendsService {
-    private static Random generator;
-    private FriendsRepository friendsRepository;
-    private ModelMapper mapper;
-    private Response response;
+    private static final Random generator= new Random();
+    private final FriendsRepository friendsRepository;
+    private final ModelMapper mapper;
+    private final Response response;
 
     @Override
     public Data getFriend(Long id) {

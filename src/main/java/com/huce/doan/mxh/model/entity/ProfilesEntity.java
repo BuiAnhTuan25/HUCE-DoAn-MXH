@@ -22,13 +22,13 @@ public class ProfilesEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "birthday", unique = true)
+    @Column(name = "birthday")
     private LocalDate birthday;
 
     @Column(name = "address")
@@ -37,10 +37,10 @@ public class ProfilesEntity {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "is_public", unique = true)
+    @Column(name = "is_public")
     private Boolean isPublic;
 
-    @Column(name = "status", unique = true)
+    @Column(name = "status")
     private StatusEnum status;
 
     public ProfilesEntity mapperProfilesDto(ProfilesDto profile) {

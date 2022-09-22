@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,9 +25,12 @@ public class PostsDto {
     @JsonProperty("picture_url")
     private String pictureUrl;
 
+    @JsonProperty("count_likes")
+    private Integer countLikes;
+
     @JsonProperty("post_status")
     private PostStatusEnum postStatus;
 
     @JsonProperty("posting_time")
-    private Long postingTime;
+    private LocalDateTime postingTime;
 }
