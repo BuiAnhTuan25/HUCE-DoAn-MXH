@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostsRepository extends JpaRepository<PostsEntity, Long> {
-    Page<PostsEntity> findByAuthorId(Pageable pageable, @Param("author_id") Long authorId);
+    Page<PostsEntity> findByAuthorId(@Param("author_id") Long authorId,Pageable pageable);
 }

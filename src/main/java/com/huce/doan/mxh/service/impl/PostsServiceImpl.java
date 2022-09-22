@@ -32,21 +32,21 @@ public class PostsServiceImpl implements PostsService {
     private Response response;
 
     @Override
-    public Data getPost(Long id){
+    public Data getPost(Long id) {
         PostsEntity postsEntity = postsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return response.responseData(mapper.map(postsEntity, PostsDto.class));
     }
 
     @Override
-    public ListData getByAuthorId(Long id, int page, int pageSize){
-        Page<PostsEntity> posts = postsRepository.findByAuthorId( PageRequest.of(page, pageSize), id);
+    public ListData getByAuthorId(Long id, int page, int pageSize) {
+        Page<PostsEntity> posts = postsRepository.findByAuthorId(id, PageRequest.of(page, pageSize));
 
-        return response.responseListData(posts.getContent(),new Pagination(posts.getNumber(), posts.getSize(), posts.getTotalPages(),
+        return response.responseListData(posts.getContent(), new Pagination(posts.getNumber(), posts.getSize(), posts.getTotalPages(),
                 (int) posts.getTotalElements()));
     }
 
     @Override
-    public Data createPost(PostsDto post, MultipartFile picture){
+    public Data createPost(PostsDto post, MultipartFile picture) {
         PostsEntity postsEntity = new PostsEntity().mapperPostsDto(post);
 
         if (picture != null) {
@@ -59,11 +59,11 @@ public class PostsServiceImpl implements PostsService {
             }
         }
 
-        return response.responseData(mapper.map(postsRepository.save(postsEntity),PostsDto.class));
+        return response.responseData(mapper.map(postsRepository.save(postsEntity), PostsDto.class));
     }
 
     @Override
-    public Data updatePost(PostsDto post, MultipartFile picture, Long id){
+    public Data updatePost(PostsDto post, MultipartFile picture, Long id) {
         post.setId(id);
         PostsEntity postsEntity = postsRepository.findById(id).orElseThrow(EntityNotFoundException::new).mapperPostsDto(post);
 
@@ -77,14 +77,14 @@ public class PostsServiceImpl implements PostsService {
             }
         }
 
-        return response.responseData(mapper.map(postsRepository.save(postsEntity),PostsDto.class));
+        return response.responseData(mapper.map(postsRepository.save(postsEntity), PostsDto.class));
     }
 
     @Override
-    public Data deletePost(Long id){
+    public Data deletePost(Long id) {
         PostsEntity postsEntity = postsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         postsRepository.deleteById(id);
 
-        return response.responseData(mapper.map(postsEntity,PostsDto.class));
+        return response.responseData(mapper.map(postsEntity, PostsDto.class));
     }
 }

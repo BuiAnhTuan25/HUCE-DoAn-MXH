@@ -19,40 +19,40 @@ public class PostsController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getPost(
             @PathVariable Long id
-    ){
+    ) {
         return new ResponseEntity<>(postsService.getPost(id), HttpStatus.OK);
     }
 
     @GetMapping("/author-id/{id}")
     public ResponseEntity<?> getByAuthorId(
             @PathVariable Long id,
-            @RequestParam(name="page") int page,
-            @RequestParam(name="page-size") int pageSize
-    ){
-        return new ResponseEntity<>(postsService.getByAuthorId(id,page,pageSize),HttpStatus.OK);
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "page-size") int pageSize
+    ) {
+        return new ResponseEntity<>(postsService.getByAuthorId(id, page, pageSize), HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity<?> createPost(
             @ModelAttribute PostsDto post,
-            @RequestParam(name="picture",required = false) MultipartFile picture
-    ){
-        return new ResponseEntity<>(postsService.createPost(post, picture),HttpStatus.CREATED);
+            @RequestParam(name = "picture", required = false) MultipartFile picture
+    ) {
+        return new ResponseEntity<>(postsService.createPost(post, picture), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(
             @PathVariable Long id,
             @ModelAttribute PostsDto post,
-            @RequestParam(name="picture",required = false) MultipartFile picture
-    ){
-        return new ResponseEntity<>(postsService.updatePost(post, picture, id),HttpStatus.OK);
+            @RequestParam(name = "picture", required = false) MultipartFile picture
+    ) {
+        return new ResponseEntity<>(postsService.updatePost(post, picture, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(
             @PathVariable Long id
-    ){
-        return new ResponseEntity<>(postsService.deletePost(id),HttpStatus.OK);
+    ) {
+        return new ResponseEntity<>(postsService.deletePost(id), HttpStatus.OK);
     }
 }

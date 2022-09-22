@@ -22,7 +22,7 @@ public class FriendsDto {
     private Long meId;
 
     @JsonProperty("friend_code")
-    private Long friend_code;
+    private Long friendCode;
 
     @JsonProperty("friend_status")
     private FriendStatusEnum friendStatus;
