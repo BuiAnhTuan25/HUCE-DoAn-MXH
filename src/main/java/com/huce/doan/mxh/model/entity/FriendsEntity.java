@@ -21,16 +21,16 @@ public class FriendsEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "friend_id", unique = true)
+    @Column(name = "friend_id")
     private Long friendId;
 
-    @Column(name = "me_id", unique = true)
+    @Column(name = "me_id")
     private Long meId;
 
-    @Column(name = "friend_code", unique = true)
+    @Column(name = "friend_code")
     private Long friendCode;
 
-    @Column(name = "friend_status", unique = true)
+    @Column(name = "friend_status")
     private FriendStatusEnum friendStatus;
 
     public FriendsEntity mapperFriendsDto(FriendsDto friend){

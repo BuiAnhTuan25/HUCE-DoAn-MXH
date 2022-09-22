@@ -21,10 +21,10 @@ import java.util.Map;
 @AllArgsConstructor
 public class ProfilesServiceImpl implements ProfilesService {
 
-    private ProfilesRepository profilesRepository;
-    private ModelMapper mapper;
-    private Response response;
-    private Cloudinary cloudinary;
+    private final ProfilesRepository profilesRepository;
+    private final ModelMapper mapper;
+    private final Response response;
+    private final Cloudinary cloudinary;
 
     @Override
     public Data getProfile(Long id) {

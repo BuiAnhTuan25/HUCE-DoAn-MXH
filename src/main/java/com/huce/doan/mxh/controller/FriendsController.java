@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("api/v1.0/friends")
 public class FriendsController {
-    private FriendsService friendsService;
+    private final FriendsService friendsService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getFriend(

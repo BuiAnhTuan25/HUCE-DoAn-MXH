@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @RequestMapping("api/v1.0/posts")
 public class PostsController {
-    private PostsService postsService;
+    private final PostsService postsService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPost(

@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @RequestMapping("api/v1.0/profiles")
 public class ProfilesController {
-    private ProfilesService profilesService;
+    private final ProfilesService profilesService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProfile(

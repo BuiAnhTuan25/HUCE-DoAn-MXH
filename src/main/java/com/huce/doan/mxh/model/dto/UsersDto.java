@@ -22,7 +22,7 @@ public class UsersDto {
 
     private Boolean isProfile;
 
-    private String mail;
+    private String email;
 
     private ProviderEnum provider;
 }

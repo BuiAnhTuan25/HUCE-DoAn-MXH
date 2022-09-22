@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,7 +27,7 @@ public class MessagesDto {
     private String content;
 
     @JsonProperty("send_time")
-    private LocalDate sendTime;
+    private LocalDateTime sendTime;
 
     @JsonProperty("message_type")
     private MessageTypeEnum messageType;
