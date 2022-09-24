@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.model.entity;
 
+import com.huce.doan.mxh.model.dto.CommentsDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,4 +35,15 @@ public class CommentsEntity {
 
     @Column(name = "comment_time")
     private LocalDateTime commentTime;
+
+    public CommentsEntity mapperCommentsDto(CommentsDto comment){
+        this.id = comment.getId();
+        this.postId = comment.getPostId();
+        this.authorId = comment.getAuthorId();
+        this.content = comment.getContent();
+        this.pictureUrl = comment.getPictureUrl();
+        this.commentTime = comment.getCommentTime();
+
+        return this;
+    }
 }
