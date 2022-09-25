@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,8 +17,10 @@ import javax.persistence.Column;
 public class UsersDto {
     private Long id;
 
+    @NotBlank
     private String username;
 
+    @NotBlank
     private String password;
 
     private Boolean isProfile;

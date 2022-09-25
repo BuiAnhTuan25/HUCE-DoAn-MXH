@@ -1,11 +1,15 @@
 package com.huce.doan.mxh.controller;
 
+import com.huce.doan.mxh.model.dto.UserRegister;
 import com.huce.doan.mxh.model.dto.UsersDto;
 import com.huce.doan.mxh.service.UsersService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 
 @CrossOrigin
 @RestController
@@ -23,9 +27,9 @@ public class UsersController {
 
     @PostMapping("")
     public ResponseEntity<?> createUser(
-            @RequestBody UsersDto user
-    ) {
-        return new ResponseEntity<>(usersService.createUser(user), HttpStatus.CREATED);
+            @RequestBody UserRegister user
+    ) throws MessagingException, UnsupportedEncodingException {
+        return new ResponseEntity<>(usersService.createUser(user, new StringBuffer("http://localhost:4200/register-verify/")), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
