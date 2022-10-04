@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.huce.doan.mxh.constains.ProviderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class UsersDto {
     @NotBlank
     private String password;
 
+    @JsonProperty("is_profile")
     private Boolean isProfile;
 
     private String email;

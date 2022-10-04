@@ -21,13 +21,21 @@ public class FriendsController {
         return new ResponseEntity<>(friendsService.getFriend(id), HttpStatus.OK);
     }
 
+    @GetMapping("/{meId}/{friendId}")
+    public ResponseEntity<?> findByMeIdAndFriendId(
+            @PathVariable Long meId,
+            @PathVariable Long friendId
+    ) {
+        return new ResponseEntity<>(friendsService.findByMeIdAndFriendId(meId, friendId), HttpStatus.OK);
+    }
+
     @GetMapping("/me-id/{id}")
     public ResponseEntity<?> getByMeId(
             @PathVariable Long id,
             @RequestParam(name = "page") int page,
             @RequestParam(name = "page-size") int pageSize
     ) {
-        return new ResponseEntity<>(friendsService.getByMeId(id, page, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(friendsService.getListFriendByMeId(id, page, pageSize), HttpStatus.OK);
     }
 
     @PostMapping("")

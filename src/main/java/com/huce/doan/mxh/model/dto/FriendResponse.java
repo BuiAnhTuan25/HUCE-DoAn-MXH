@@ -7,12 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class FriendsDto {
+public class FriendResponse {
     private Long id;
 
     @JsonProperty("friend_id")
@@ -26,4 +25,9 @@ public class FriendsDto {
 
     @JsonProperty("friend_status")
     private FriendStatusEnum friendStatus;
+
+    private String name;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 }

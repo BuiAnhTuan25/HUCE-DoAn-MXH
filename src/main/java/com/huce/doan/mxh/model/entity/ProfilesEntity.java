@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.model.entity;
 
+import com.huce.doan.mxh.constains.GenderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 public class ProfilesEntity {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "name")
@@ -30,6 +31,9 @@ public class ProfilesEntity {
 
     @Column(name = "birthday")
     private LocalDate birthday;
+
+    @Column(name = "gender")
+    private GenderEnum gender;
 
     @Column(name = "address")
     private String address;
@@ -51,6 +55,7 @@ public class ProfilesEntity {
         this.address = profile.getAddress();
         this.isPublic = profile.getIsPublic();
         this.avatarUrl = profile.getAvatarUrl();
+        this.gender = profile.getGender();
 
         return this;
     }

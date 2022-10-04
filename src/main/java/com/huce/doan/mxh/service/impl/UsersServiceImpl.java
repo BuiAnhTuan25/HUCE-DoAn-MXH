@@ -194,17 +194,15 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
-    public Data updatePassword(String code, String password) {
-        Optional<UsersEntity> optionalUser = usersRepository.findByUpdatePasswordToken(code);
+    public Data updatePassword(Long id,String password) {
+        Optional<UsersEntity> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return new Data(false, "password token not found", null);
         }
 
         UsersEntity user = optionalUser.get();
         user.setPassword(passwordEncoder.encode(password));
-        user.setUpdatePasswordToken(null);
-        usersRepository.save(user);
-        return new Data(true, "update password success", null);
+        return new Data(true, "update password success", usersRepository.save(user));
     }
 
     @Override

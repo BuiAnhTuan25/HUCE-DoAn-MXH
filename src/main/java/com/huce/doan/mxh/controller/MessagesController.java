@@ -1,11 +1,18 @@
 package com.huce.doan.mxh.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.service.MessagesService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+
 
 @CrossOrigin
 @RestController
@@ -14,13 +21,17 @@ import org.springframework.web.bind.annotation.*;
 public class MessagesController {
     private final MessagesService messagesService;
 
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    private final ModelMapper mapper;
+
     @GetMapping("/history/{senderId}/{receiverId}")
     public ResponseEntity<?> getBySenderIdAndReceiverId(
             @PathVariable Long senderId,
             @PathVariable Long receiverId,
             @RequestParam(name = "page") int page,
             @RequestParam(name = "page-size") int pageSize
-    ) {
+    ){
         return new ResponseEntity<>(messagesService.getBySenderIdAndReceiverId(senderId, receiverId, page, pageSize), HttpStatus.OK);
     }
 
@@ -45,5 +56,18 @@ public class MessagesController {
             @PathVariable Long id
     ){
         return new ResponseEntity<>(messagesService.deleteMessage(id),HttpStatus.OK);
+    }
+
+    @MessageMapping("/chat/{friendId}")
+    public void sendMessage(
+            @DestinationVariable Long friendId,
+            String message
+    )throws JsonProcessingException {
+        MessagesDto messagesDto = new ObjectMapper().readValue(message, MessagesDto.class);
+        System.out.println(messagesDto.getContent());
+
+        MessagesDto msgSave = mapper.map(messagesService.createMessage(messagesDto).getData(),MessagesDto.class);
+        simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getSenderId(),msgSave);
+        simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getReceiverId(),msgSave);
     }
 }

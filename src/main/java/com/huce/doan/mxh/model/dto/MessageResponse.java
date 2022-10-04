@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.huce.doan.mxh.constains.MessageTypeEnum;
 import lombok.AllArgsConstructor;
@@ -19,7 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class MessagesDto {
+public class MessageResponse {
     private Long id;
 
     @JsonProperty("receiver_id")
@@ -39,4 +41,9 @@ public class MessagesDto {
 
     @JsonProperty("message_type")
     private MessageTypeEnum messageType;
+
+    private String name;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 }

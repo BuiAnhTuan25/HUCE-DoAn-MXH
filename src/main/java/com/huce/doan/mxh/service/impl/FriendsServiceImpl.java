@@ -1,6 +1,7 @@
 package com.huce.doan.mxh.service.impl;
 
 import com.huce.doan.mxh.constains.FriendStatusEnum;
+import com.huce.doan.mxh.model.dto.FriendResponse;
 import com.huce.doan.mxh.model.dto.FriendsDto;
 import com.huce.doan.mxh.model.entity.FriendsEntity;
 import com.huce.doan.mxh.model.response.Data;
@@ -36,8 +37,14 @@ public class FriendsServiceImpl implements FriendsService {
     }
 
     @Override
-    public ListData getByMeId(Long id, int page, int pageSize) {
-        Page<FriendsEntity> friends = friendsRepository.findByMeId(id, PageRequest.of(page, pageSize));
+    public Data findByMeIdAndFriendId(Long meId, Long friendId){
+        FriendsEntity friendsEntity = friendsRepository.findByMeIdAndFriendId(meId,friendId).orElseThrow(EntityNotFoundException::new);
+        return response.responseData(mapper.map(friendsEntity, FriendsDto.class));
+    }
+
+    @Override
+    public ListData getListFriendByMeId(Long id, int page, int pageSize) {
+        Page<FriendResponse> friends = friendsRepository.getListFriendByMeId(id, PageRequest.of(page, pageSize));
 
         return response.responseListData(friends.getContent(), new Pagination(friends.getNumber(), friends.getSize(), friends.getTotalPages(),
                 (int) friends.getTotalElements()));
@@ -46,7 +53,7 @@ public class FriendsServiceImpl implements FriendsService {
     @Override
     public Data createFriend(FriendsDto friend) {
         FriendsEntity friendsEntity = new FriendsEntity().mapperFriendsDto(friend);
-        friendsEntity.setFriendCode(generator.nextLong());
+        friendsEntity.setFriendCode(generator.nextInt());
         friendsEntity.setFriendStatus(FriendStatusEnum.WAITING);
 
         FriendsEntity friendsEntity1 = new FriendsEntity();
@@ -70,7 +77,7 @@ public class FriendsServiceImpl implements FriendsService {
     @Override
     public Data deleteFriend(Long id) {
         FriendsEntity friendsEntity = friendsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        FriendsEntity friend = friendsRepository.findByFriendCode(friendsEntity.getFriendCode()).orElseThrow(EntityNotFoundException::new);
+        FriendsEntity friend = friendsRepository.findByMeIdAndFriendId(friendsEntity.getFriendId(),friendsEntity.getMeId()).orElseThrow(EntityNotFoundException::new);
         friendsRepository.deleteById(id);
         friendsRepository.deleteById(friend.getId());
 

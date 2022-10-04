@@ -7,11 +7,13 @@ import com.huce.doan.mxh.model.response.ListData;
 public interface FriendsService {
     Data getFriend(Long id);
 
-    ListData getByMeId(Long userId, int page, int pageSize);
+    ListData getListFriendByMeId(Long userId, int page, int pageSize);
 
     Data createFriend(FriendsDto post);
 
     Data updateFriend(FriendsDto post, Long id);
 
     Data deleteFriend(Long id);
+
+    Data findByMeIdAndFriendId(Long meId, Long friendId);
 }
