@@ -28,7 +28,7 @@ public interface UsersService {
 
     Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException;
 
-    Data updatePassword(String code, String password);
+    Data updatePassword(Long id,String password);
 
     Data forgotPassword(String mail) throws MessagingException;
 }

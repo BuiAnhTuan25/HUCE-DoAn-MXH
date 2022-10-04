@@ -28,7 +28,7 @@ public class FriendsEntity {
     private Long meId;
 
     @Column(name = "friend_code")
-    private Long friendCode;
+    private int friendCode;
 
     @Column(name = "friend_status")
     private FriendStatusEnum friendStatus;

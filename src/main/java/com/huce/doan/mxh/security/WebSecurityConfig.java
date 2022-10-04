@@ -75,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1.0/auth/login","/api/v1.0/auth/register",
-                             "/login/oauth/**"
+                             "/api/v1.0/auth-social/**","/api/v1.0/messages"
                              ).permitAll()
                 .antMatchers("/topic/**").permitAll()
                 .antMatchers(HttpMethod.POST, "*/swagger-ui.html/*").permitAll()

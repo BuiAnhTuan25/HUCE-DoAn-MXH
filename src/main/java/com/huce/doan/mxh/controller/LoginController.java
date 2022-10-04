@@ -71,9 +71,9 @@ public class LoginController {
         return ResponseEntity.ok(userService.updatePasswordToken(mail, new StringBuffer("http://localhost:4200/update_password_token?code=")));
     }
 
-    @PostMapping("/update-password-token")
-    public ResponseEntity<?> updatePassword(@RequestParam String code, @RequestParam String password) {
-        return ResponseEntity.ok(userService.updatePassword(code, password));
+    @PutMapping("/update-password/{id}")
+    public ResponseEntity<?> updatePassword(@PathVariable Long id, @RequestBody UsersDto user) {
+        return ResponseEntity.ok(userService.updatePassword(id, user.getPassword()));
     }
 
     @GetMapping("/forgot-password")

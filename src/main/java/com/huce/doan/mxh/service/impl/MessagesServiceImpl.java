@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.service.impl;
 
+import com.huce.doan.mxh.model.dto.MessageResponse;
 import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.model.entity.MessagesEntity;
 import com.huce.doan.mxh.model.response.Data;
@@ -26,7 +27,7 @@ public class MessagesServiceImpl implements MessagesService {
 
     @Override
     public ListData getBySenderIdAndReceiverId(Long senderId,Long receiverId, int page, int pageSize){
-        Page<MessagesEntity> messages = messagesRepository.findBySenderIdAndReceiverId(senderId, receiverId, PageRequest.of(page, pageSize));
+        Page<MessageResponse> messages = messagesRepository.getListMessageBySenderAndReceiver(senderId, receiverId, PageRequest.of(page, pageSize));
 
         return response.responseListData(messages.getContent(), new Pagination(messages.getNumber(), messages.getSize(), messages.getTotalPages(),
                 (int) messages.getTotalElements()));
@@ -34,7 +35,7 @@ public class MessagesServiceImpl implements MessagesService {
 
     @Override
     public ListData getByReceiverId(Long receiverId, int page, int pageSize){
-        Page<MessagesEntity> messages = messagesRepository.findByReceiverId(receiverId, PageRequest.of(page, pageSize));
+        Page<MessageResponse> messages = messagesRepository.getListMessageByReceiver(receiverId, PageRequest.of(page, pageSize));
 
         return response.responseListData(messages.getContent(), new Pagination(messages.getNumber(), messages.getSize(), messages.getTotalPages(),
                 (int) messages.getTotalElements()));
@@ -42,6 +43,7 @@ public class MessagesServiceImpl implements MessagesService {
 
     @Override
     public Data createMessage(MessagesDto message){
+        message.setSendTime(LocalDateTime.now());
         MessagesEntity messagesEntity = new MessagesEntity().mapperMessagesDto(message);
         messagesEntity.setSendTime(LocalDateTime.now());
 

@@ -28,7 +28,7 @@ public class UsersController {
     @PostMapping("")
     public ResponseEntity<?> createUser(
             @RequestBody UserRegister user
-    ) throws MessagingException, UnsupportedEncodingException {
+    ) throws MessagingException {
         return new ResponseEntity<>(usersService.createUser(user, new StringBuffer("http://localhost:4200/register-verify/")), HttpStatus.CREATED);
     }
 
