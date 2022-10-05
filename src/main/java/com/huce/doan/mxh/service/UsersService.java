@@ -1,6 +1,7 @@
 package com.huce.doan.mxh.service;
 
 import com.huce.doan.mxh.constains.ProviderEnum;
+import com.huce.doan.mxh.model.dto.UpdatePasswordDto;
 import com.huce.doan.mxh.model.dto.UserRegister;
 import com.huce.doan.mxh.model.dto.UsersDto;
 import com.huce.doan.mxh.model.entity.UsersEntity;
@@ -28,7 +29,9 @@ public interface UsersService {
 
     Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException;
 
-    Data updatePassword(Long id,String password);
+    Data updatePassword(String code, String password);
+
+    Data changePassword(Long id, UpdatePasswordDto passwordDto);
 
     Data forgotPassword(String mail) throws MessagingException;
 }

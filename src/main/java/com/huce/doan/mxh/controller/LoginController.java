@@ -1,6 +1,7 @@
 package com.huce.doan.mxh.controller;
 
 import com.huce.doan.mxh.model.dto.LoginResponse;
+import com.huce.doan.mxh.model.dto.UpdatePasswordDto;
 import com.huce.doan.mxh.model.dto.UserRegister;
 import com.huce.doan.mxh.model.dto.UsersDto;
 import com.huce.doan.mxh.model.response.Response;
@@ -71,9 +72,14 @@ public class LoginController {
         return ResponseEntity.ok(userService.updatePasswordToken(mail, new StringBuffer("http://localhost:4200/update_password_token?code=")));
     }
 
-    @PutMapping("/update-password/{id}")
-    public ResponseEntity<?> updatePassword(@PathVariable Long id, @RequestBody UsersDto user) {
-        return ResponseEntity.ok(userService.updatePassword(id, user.getPassword()));
+    @PostMapping("/confirm/update-password-token")
+    public ResponseEntity<?> updatePassword(@RequestParam String code, @RequestParam String password) {
+        return ResponseEntity.ok(userService.updatePassword(code, password));
+    }
+
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody UpdatePasswordDto passwordDto) {
+        return ResponseEntity.ok(userService.changePassword(id, passwordDto));
     }
 
     @GetMapping("/forgot-password")

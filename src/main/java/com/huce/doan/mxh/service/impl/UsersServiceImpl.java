@@ -2,6 +2,7 @@ package com.huce.doan.mxh.service.impl;
 
 import com.huce.doan.mxh.constains.ProviderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
+import com.huce.doan.mxh.model.dto.UpdatePasswordDto;
 import com.huce.doan.mxh.model.dto.UserRegister;
 import com.huce.doan.mxh.model.dto.UsersDto;
 import com.huce.doan.mxh.model.entity.UsersEntity;
@@ -14,6 +15,7 @@ import com.huce.doan.mxh.service.UsersService;
 import lombok.AllArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
@@ -180,7 +183,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     @Override
     public Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException {
         UsersEntity user = usersRepository.findByEmail(mail);
-        if (user==null) return new Data(false, "mail not found", null);
+        if (user == null) return new Data(false, "mail not found", null);
 
         user.setUpdatePasswordToken(RandomString.make(64));
         usersRepository.save(user);
@@ -194,15 +197,17 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
-    public Data updatePassword(Long id,String password) {
-        Optional<UsersEntity> optionalUser = usersRepository.findById(id);
-        if (optionalUser.isEmpty()) {
+    public Data updatePassword(String code, String password) {
+        Optional<UsersEntity> optionalUser = usersRepository.findByUpdatePasswordToken(code);
+        if (!optionalUser.isPresent()) {
             return new Data(false, "password token not found", null);
         }
 
         UsersEntity user = optionalUser.get();
         user.setPassword(passwordEncoder.encode(password));
-        return new Data(true, "update password success", usersRepository.save(user));
+        user.setUpdatePasswordToken(null);
+        usersRepository.save(user);
+        return new Data(true, "update password success", null);
     }
 
     @Override
@@ -221,6 +226,20 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
 
         mailService.sendMail(props, user.getEmail(), "forgotPassword", "Quên mật khẩu");
         return new Data(true, "forgot password success", pass);
+    }
+
+    @Override
+    public Data changePassword(Long id, UpdatePasswordDto passwordDto) {
+        UsersEntity usersEntity = usersRepository.findById(id).orElseThrow(EntityExistsException::new);
+
+        if(!passwordEncoder.matches(passwordDto.getOldPassword(),usersEntity.getPassword()))
+            return new Data(false,"Incorrect password",null);
+        if(passwordDto.getOldPassword().equals(passwordDto.getNewPassword()))
+            return new Data(false,"The new password must be different from the old password",null);
+
+        usersEntity.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+
+        return new Data(true,"success",mapper.map(usersRepository.save(usersEntity),UsersDto.class));
     }
 
 
