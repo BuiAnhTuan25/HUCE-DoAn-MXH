@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
-import java.util.Random;
 
 
 @Service
@@ -85,7 +84,7 @@ public class FriendsServiceImpl implements FriendsService {
             friend.map(dt -> {
                 friendsRepository.deleteById(id);
                 friendsRepository.deleteById(dt.getId());
-                return response.responseData("Delete friend successfully", mapper.map(friendsEntity, FriendsDto.class));
+                return response.responseData("Delete friend successfully", mapper.map(data, FriendsDto.class));
             });
             return response.responseError("Entity not found");
         }).orElseGet(() -> response.responseError("Entity not found"));
