@@ -14,8 +14,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityExistsException;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -28,8 +28,9 @@ public class ProfilesServiceImpl implements ProfilesService {
 
     @Override
     public Data getProfile(Long id) {
-        ProfilesEntity profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE).orElseThrow(EntityExistsException::new);
-        return response.responseData(mapper.map(profilesEntity, ProfilesDto.class));
+        Optional<ProfilesEntity> profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
+
+        return profilesEntity.map(data -> response.responseData("Get profile successfully", mapper.map(profilesEntity, ProfilesDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
@@ -48,31 +49,39 @@ public class ProfilesServiceImpl implements ProfilesService {
             profilesEntity.setAvatarUrl(
                     "https://res.cloudinary.com/anhtuanbui/image/upload/v1657248868/knybg0tx6rj48d62nv4a.png");
 
-        return response.responseData(mapper.map(profilesRepository.save(profilesEntity), ProfilesDto.class));
+        return response.responseData("Create profile successfully", mapper.map(profilesRepository.save(profilesEntity), ProfilesDto.class));
     }
 
     @Override
     public Data updateProfile(ProfilesDto profile, MultipartFile avatar, Long id) {
         profile.setId(id);
-        ProfilesEntity profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE).orElseThrow(EntityExistsException::new).mapperProfilesDto(profile);
-        if (avatar != null) {
-            try {
-                Map x = this.cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                profilesEntity.setAvatarUrl(x.get("url").toString());
+        Optional<ProfilesEntity> profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
+        return profilesEntity.map(data -> {
+            data = data.mapperProfilesDto(profile);
+            if (avatar != null) {
+                try {
+                    Map x = this.cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                    data.setAvatarUrl(x.get("url").toString());
 
-            } catch (Exception e) {
-                System.out.println(e);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
-        }
 
-        return response.responseData(mapper.map(profilesRepository.save(profilesEntity), ProfilesDto.class));
+            return response.responseData("Update profile successfully", mapper.map(profilesRepository.save(data), ProfilesDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
+
     }
 
     @Override
     public Data deleteProfile(Long id) {
-        ProfilesEntity profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE).orElseThrow(EntityExistsException::new);
-        profilesEntity.setStatus(StatusEnum.INACTIVE);
+        Optional<ProfilesEntity> profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
 
-        return response.responseData(mapper.map(profilesEntity, ProfilesDto.class));
+        return profilesEntity.map(data -> {
+            data.setStatus(StatusEnum.INACTIVE);
+
+            return response.responseData("Delete profile success", mapper.map(data, ProfilesDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
+
     }
 }

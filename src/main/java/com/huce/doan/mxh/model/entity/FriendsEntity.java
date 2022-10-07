@@ -27,9 +27,6 @@ public class FriendsEntity {
     @Column(name = "me_id")
     private Long meId;
 
-    @Column(name = "friend_code")
-    private int friendCode;
-
     @Column(name = "friend_status")
     private FriendStatusEnum friendStatus;
 
@@ -37,7 +34,6 @@ public class FriendsEntity {
         this.id = friend.getId();
         this.friendId = friend.getFriendId();
         this.meId = friend.getMeId();
-        this.friendCode = friend.getFriendCode();
         this.friendStatus = friend.getFriendStatus();
 
         return this;

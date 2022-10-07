@@ -1,7 +1,6 @@
 package com.huce.doan.mxh.service.impl;
 
 import com.huce.doan.mxh.constains.FriendStatusEnum;
-import com.huce.doan.mxh.model.dto.FriendResponse;
 import com.huce.doan.mxh.model.dto.FriendsDto;
 import com.huce.doan.mxh.model.entity.FriendsEntity;
 import com.huce.doan.mxh.model.response.Data;
@@ -16,8 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -25,26 +24,32 @@ import java.util.Random;
 @AllArgsConstructor
 @Transactional(rollbackOn = Exception.class)
 public class FriendsServiceImpl implements FriendsService {
-    private static final Random generator= new Random();
     private final FriendsRepository friendsRepository;
     private final ModelMapper mapper;
     private final Response response;
 
     @Override
     public Data getFriend(Long id) {
-        FriendsEntity friendsEntity = friendsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return response.responseData(mapper.map(friendsEntity, FriendsDto.class));
+        Optional<FriendsEntity> friendsEntity = friendsRepository.findById(id);
+        return friendsEntity.map(data -> response.responseData("Get friend successfully", mapper.map(data, FriendsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
-    public Data findByMeIdAndFriendId(Long meId, Long friendId){
-        FriendsEntity friendsEntity = friendsRepository.findByMeIdAndFriendId(meId,friendId).orElseThrow(EntityNotFoundException::new);
-        return response.responseData(mapper.map(friendsEntity, FriendsDto.class));
+    public Data findByMeIdAndFriendId(Long meId, Long friendId) {
+        Optional<FriendsEntity> friendsEntity = friendsRepository.findByMeIdAndFriendId(meId, friendId);
+
+        return friendsEntity.map(data -> response.responseData("Get friend successfully", mapper.map(data, FriendsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
+    }
+
+    @Override
+    public Data findByPhoneNumber(String phoneNumber) {
+        Optional<FriendsDto> friendsDto = friendsRepository.findByPhoneNumber(phoneNumber);
+        return friendsDto.map(data -> response.responseData("Get friend successfully", data)).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
     public ListData getListFriendByMeId(Long id, int page, int pageSize) {
-        Page<FriendResponse> friends = friendsRepository.getListFriendByMeId(id, PageRequest.of(page, pageSize));
+        Page<FriendsDto> friends = friendsRepository.getListFriendByMeId(id, PageRequest.of(page, pageSize));
 
         return response.responseListData(friends.getContent(), new Pagination(friends.getNumber(), friends.getSize(), friends.getTotalPages(),
                 (int) friends.getTotalElements()));
@@ -53,34 +58,36 @@ public class FriendsServiceImpl implements FriendsService {
     @Override
     public Data createFriend(FriendsDto friend) {
         FriendsEntity friendsEntity = new FriendsEntity().mapperFriendsDto(friend);
-        friendsEntity.setFriendCode(generator.nextInt());
         friendsEntity.setFriendStatus(FriendStatusEnum.WAITING);
 
         FriendsEntity friendsEntity1 = new FriendsEntity();
         friendsEntity1.setFriendId(friendsEntity.getMeId());
         friendsEntity1.setMeId(friendsEntity.getFriendId());
-        friendsEntity1.setFriendCode(friendsEntity.getFriendCode());
         friendsEntity1.setFriendStatus(FriendStatusEnum.CONFIRM);
         friendsRepository.save(friendsEntity1);
 
-        return response.responseData(mapper.map(friendsRepository.save(friendsEntity), FriendsDto.class));
+        return response.responseData("Create friend successfully", mapper.map(friendsRepository.save(friendsEntity), FriendsDto.class));
     }
 
     @Override
     public Data updateFriend(FriendsDto friend, Long id) {
         friend.setId(id);
-        FriendsEntity friendsEntity = friendsRepository.findById(id).orElseThrow(EntityNotFoundException::new).mapperFriendsDto(friend);
-
-        return response.responseData(mapper.map(friendsRepository.save(friendsEntity), FriendsDto.class));
+        Optional<FriendsEntity> friendsEntity = friendsRepository.findById(id);
+        return friendsEntity.map(data -> response.responseData("Update friend successfully", mapper.map(friendsRepository.save(data), FriendsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
     public Data deleteFriend(Long id) {
-        FriendsEntity friendsEntity = friendsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        FriendsEntity friend = friendsRepository.findByMeIdAndFriendId(friendsEntity.getFriendId(),friendsEntity.getMeId()).orElseThrow(EntityNotFoundException::new);
-        friendsRepository.deleteById(id);
-        friendsRepository.deleteById(friend.getId());
+        Optional<FriendsEntity> friendsEntity = friendsRepository.findById(id);
 
-        return response.responseData(mapper.map(friendsEntity, FriendsDto.class));
+        return friendsEntity.map(data -> {
+            Optional<FriendsEntity> friend = friendsRepository.findByMeIdAndFriendId(data.getFriendId(), data.getMeId());
+            friend.map(dt -> {
+                friendsRepository.deleteById(id);
+                friendsRepository.deleteById(dt.getId());
+                return response.responseData("Delete friend successfully", mapper.map(friendsEntity, FriendsDto.class));
+            });
+            return response.responseError("Entity not found");
+        }).orElseGet(() -> response.responseError("Entity not found"));
     }
 }

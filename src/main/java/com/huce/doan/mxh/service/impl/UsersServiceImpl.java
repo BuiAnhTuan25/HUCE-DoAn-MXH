@@ -2,6 +2,7 @@ package com.huce.doan.mxh.service.impl;
 
 import com.huce.doan.mxh.constains.ProviderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
+import com.huce.doan.mxh.model.dto.UpdatePasswordDto;
 import com.huce.doan.mxh.model.dto.UserRegister;
 import com.huce.doan.mxh.model.dto.UsersDto;
 import com.huce.doan.mxh.model.entity.UsersEntity;
@@ -21,9 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityExistsException;
 import javax.transaction.Transactional;
-import java.io.UnsupportedEncodingException;
 import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,18 +48,18 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
 
     @Override
     public Data getUser(Long id) {
-        UsersEntity user = usersRepository.findByIdAndStatus(id, StatusEnum.ACTIVE).orElseThrow(EntityNotFoundException::new);
+        Optional<UsersEntity> user = usersRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
 
-        return response.responseData(mapper.map(user, UsersDto.class));
+        return user.map(data -> response.responseData("Get user successfully", mapper.map(user, UsersDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
     public Data createUser(UserRegister user, StringBuffer siteUrl) throws MessagingException {
         Optional<UsersEntity> optional = usersRepository.findByUsername(user.getUsername());
-        if (optional.isPresent()) return new Data(false, "username already exists", null);
+        if (optional.isPresent()) return response.responseError("Username already exists");
 
         UsersEntity usersEntity = usersRepository.findByEmail(user.getEmail());
-        if (usersEntity != null) return new Data(false, "mail already exist", null);
+        if (usersEntity != null) return response.responseError("mail already exist");
         UsersEntity userEntity = new UsersEntity();
         userEntity.setUsername(user.getUsername());
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -77,27 +77,29 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
 
         mailService.sendMail(props, userEntity.getEmail(), "sendMail", "Xác thực tài khoản");
 
-        return response.responseData(mapper.map(usersRepository.save(userEntity), UsersDto.class));
+        return response.responseData("Create successfully", mapper.map(usersRepository.save(userEntity), UsersDto.class));
     }
 
     @Override
     public Data updateUser(UsersDto user, Long id) {
         user.setId(id);
-        UsersEntity userEntity = usersRepository.findByIdAndStatus(id, StatusEnum.ACTIVE).orElseThrow(EntityNotFoundException::new);
+        Optional<UsersEntity> userEntity = usersRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
 
-        return response.responseData(mapper.map(usersRepository.save(userEntity.mapperUsersDto(user)), UsersDto.class));
+        return userEntity.map(data -> response.responseData("Update successfully", mapper.map(usersRepository.save(data.mapperUsersDto(user)), UsersDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
     public Data deleteUser(Long id) {
-        UsersEntity userEntity = usersRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        userEntity.setStatus(StatusEnum.INACTIVE);
-        usersRepository.save(userEntity);
-        if (userEntity.getIsProfile()) {
-            profilesService.deleteProfile(id);
-        }
+        Optional<UsersEntity> userEntity = usersRepository.findById(id);
 
-        return response.responseData(mapper.map(userEntity, UsersDto.class));
+        return userEntity.map(data -> {
+            data.setStatus(StatusEnum.INACTIVE);
+            usersRepository.save(data);
+            if (data.getIsProfile()) {
+                profilesService.deleteProfile(id);
+            }
+            return response.responseData("Delete user successfully", mapper.map(userEntity, UsersDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
@@ -168,19 +170,19 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     @Override
     public Data verify(String verificationCode) {
         Optional<UsersEntity> optionalUser = usersRepository.findByVerificationCode(verificationCode);
-        if (!optionalUser.isPresent()) return new Data(false, "verification code not found", null);
+        if (!optionalUser.isPresent()) return response.responseError("Verification code not found");
 
         UsersEntity user = optionalUser.get();
         user.setVerificationCode(null);
         user.setStatus(StatusEnum.ACTIVE);
         usersRepository.save(user);
-        return new Data(true, "verify success", null);
+        return response.responseData("Verify successfully", null);
     }
 
     @Override
     public Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException {
         UsersEntity user = usersRepository.findByEmail(mail);
-        if (user==null) return new Data(false, "mail not found", null);
+        if (user == null) return response.responseError("Email not found");
 
         user.setUpdatePasswordToken(RandomString.make(64));
         usersRepository.save(user);
@@ -190,25 +192,27 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
         props.put("url", siteUrl.append(user.getUpdatePasswordToken()).toString());
 
         mailService.sendMail(props, user.getEmail(), "updatePassword", "Đổi mật khẩu");
-        return new Data(true, "update password success", siteUrl);
+        return response.responseData("Update password successfully", siteUrl);
     }
 
     @Override
-    public Data updatePassword(Long id,String password) {
-        Optional<UsersEntity> optionalUser = usersRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            return new Data(false, "password token not found", null);
+    public Data updatePassword(String code, String password) {
+        Optional<UsersEntity> optionalUser = usersRepository.findByUpdatePasswordToken(code);
+        if (!optionalUser.isPresent()) {
+            return response.responseError("Password token not found");
         }
 
         UsersEntity user = optionalUser.get();
         user.setPassword(passwordEncoder.encode(password));
-        return new Data(true, "update password success", usersRepository.save(user));
+        user.setUpdatePasswordToken(null);
+        usersRepository.save(user);
+        return response.responseData("Update password successfully", null);
     }
 
     @Override
     public Data forgotPassword(String mail) throws MessagingException {
         UsersEntity user = usersRepository.findByEmail(mail);
-        if (user == null) return new Data(false, "mail not found", null);
+        if (user == null) return response.responseError("Email not found");
 
         String pass = RandomString.make(10);
 
@@ -220,8 +224,22 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
         props.put("pass", pass);
 
         mailService.sendMail(props, user.getEmail(), "forgotPassword", "Quên mật khẩu");
-        return new Data(true, "forgot password success", pass);
+        return response.responseData("Forgot password successfully", pass);
     }
 
+    @Override
+    public Data changePassword(Long id, UpdatePasswordDto passwordDto) {
+        Optional<UsersEntity> usersEntity = usersRepository.findById(id);
 
+        return usersEntity.map(data -> {
+            if (!passwordEncoder.matches(passwordDto.getOldPassword(), data.getPassword()))
+                return response.responseError("Incorrect password");
+            if (passwordDto.getOldPassword().equals(passwordDto.getNewPassword()))
+                return response.responseError("The new password must be different from the old password");
+
+            data.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+
+            return response.responseData("Change password successfully", mapper.map(usersRepository.save(data), UsersDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
+    }
 }

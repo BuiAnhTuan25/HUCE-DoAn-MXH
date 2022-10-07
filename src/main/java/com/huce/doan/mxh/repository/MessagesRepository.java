@@ -1,6 +1,5 @@
 package com.huce.doan.mxh.repository;
 
-import com.huce.doan.mxh.model.dto.FriendResponse;
 import com.huce.doan.mxh.model.dto.MessageResponse;
 import com.huce.doan.mxh.model.entity.MessagesEntity;
 import org.springframework.data.domain.Page;

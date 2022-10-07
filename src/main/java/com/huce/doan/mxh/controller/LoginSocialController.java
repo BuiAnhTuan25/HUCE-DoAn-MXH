@@ -61,7 +61,7 @@ public class LoginSocialController {
         usersEntity.setUsername(payload.getEmail());
         usersEntity = userService.processOAuthPostLogin(usersEntity, ProviderEnum.GOOGLE);
         TokenDto tokenRes = addToken(usersEntity);
-        return new ResponseEntity<>(response.responseData(new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(usersEntity, UsersDto.class))), HttpStatus.OK);
+        return new ResponseEntity<>(response.responseData("Login with google successfully",new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(usersEntity, UsersDto.class))), HttpStatus.OK);
     }
 
     @PostMapping("/facebook")
@@ -74,7 +74,7 @@ public class LoginSocialController {
         usersEntity.setUsername(user.getName());
         usersEntity=userService.processOAuthPostLogin(usersEntity, ProviderEnum.FACEBOOK);
         TokenDto tokenRes = addToken(usersEntity);
-        return new ResponseEntity<>(response.responseData(new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(usersEntity, UsersDto.class))),HttpStatus.OK);
+        return new ResponseEntity<>(response.responseData("Login with facebook successfully",new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(usersEntity, UsersDto.class))),HttpStatus.OK);
 
     }
 

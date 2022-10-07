@@ -6,15 +6,15 @@ import java.util.List;
 
 @Component
 public class Response {
-    public Data responseData(Object data){
-        return new Data(true,"success",data);
+    public Data responseData(String message,Object data){
+        return new Data(true,message,200,data);
     }
 
     public ListData responseListData(List<?> listData,Pagination pagination){
-        return new ListData(true,"success",listData,pagination);
+        return new ListData(true,"success",200,listData,pagination);
     }
 
-    public Error responseError(String message,int code){
-        return new Error(false,message,code);
+    public Data responseError(String message){
+        return new Data(false,message,400,null);
     }
 }

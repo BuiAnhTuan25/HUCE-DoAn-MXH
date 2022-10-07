@@ -1,11 +1,17 @@
 package com.huce.doan.mxh.model.entity;
 
-import com.huce.doan.mxh.constains.PostStatusEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.huce.doan.mxh.constains.PrivacyEnum;
 import com.huce.doan.mxh.model.dto.PostsDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -34,9 +40,13 @@ public class PostsEntity {
     @Column(name = "count_likes")
     private Integer countLikes;
 
-    @Column(name = "post_status")
-    private PostStatusEnum postStatus;
+    @Column(name = "privacy")
+    private PrivacyEnum privacy;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd hh:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Column(name = "posting_time")
     private LocalDateTime postingTime;
 
@@ -45,7 +55,7 @@ public class PostsEntity {
         this.authorId = posts.getAuthorId();
         this.content = posts.getContent();
         this.pictureUrl = posts.getPictureUrl();
-        this.postStatus = posts.getPostStatus();
+        this.privacy = posts.getPrivacy();
         this.postingTime = posts.getPostingTime();
         this.countLikes = posts.getCountLikes();
 
