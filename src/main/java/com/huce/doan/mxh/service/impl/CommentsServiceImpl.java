@@ -32,7 +32,7 @@ public class CommentsServiceImpl implements CommentsService {
     public Data getComment(Long id) {
         Optional<CommentsEntity> commentsEntity = commentsRepository.findById(id);
 
-        return commentsEntity.map(data -> response.responseData("Get comment successfully", mapper.map(commentsEntity, CommentsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
+        return commentsEntity.map(data -> response.responseData("Get comment successfully", mapper.map(data, CommentsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override

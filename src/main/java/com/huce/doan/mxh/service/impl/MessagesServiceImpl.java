@@ -57,7 +57,7 @@ public class MessagesServiceImpl implements MessagesService {
 
         return messagesEntity.map(data -> {
             messagesRepository.deleteById(id);
-            return response.responseData("Delete message successfully", mapper.map(messagesEntity, MessagesDto.class));
+            return response.responseData("Delete message successfully", mapper.map(data, MessagesDto.class));
         }).orElseGet(() -> response.responseError("Entity not found"));
     }
 }

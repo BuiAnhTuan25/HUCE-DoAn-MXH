@@ -50,7 +50,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     public Data getUser(Long id) {
         Optional<UsersEntity> user = usersRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
 
-        return user.map(data -> response.responseData("Get user successfully", mapper.map(user, UsersDto.class))).orElseGet(() -> response.responseError("Entity not found"));
+        return user.map(data -> response.responseData("Get user successfully", mapper.map(data, UsersDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
@@ -98,7 +98,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
             if (data.getIsProfile()) {
                 profilesService.deleteProfile(id);
             }
-            return response.responseData("Delete user successfully", mapper.map(userEntity, UsersDto.class));
+            return response.responseData("Delete user successfully", mapper.map(data, UsersDto.class));
         }).orElseGet(() -> response.responseError("Entity not found"));
     }
 
