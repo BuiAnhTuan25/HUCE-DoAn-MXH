@@ -1,6 +1,6 @@
 package com.huce.doan.mxh.repository;
 
-import com.huce.doan.mxh.model.dto.FriendResponse;
+import com.huce.doan.mxh.model.dto.FriendsDto;
 import com.huce.doan.mxh.model.entity.FriendsEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +17,11 @@ public interface FriendsRepository extends JpaRepository<FriendsEntity, Long> {
 
     Page<FriendsEntity> findByMeId(@Param("me_id") Long meId, Pageable pageable);
 
-    Optional<FriendsEntity> findByFriendCode(@Param("friend_code") int friendCode);
-
-    @Query("select new com.huce.doan.mxh.model.dto.FriendResponse(f.id,f.friendId,f.meId,f.friendCode,f.friendStatus,p.name,p.avatarUrl) " +
+    @Query("select new com.huce.doan.mxh.model.dto.FriendsDto(f.id,f.friendId,f.meId,f.friendStatus,p.name,p.avatarUrl) " +
             " from FriendsEntity f join ProfilesEntity p on f.friendId=p.id where f.meId=:meId")
-    Page<FriendResponse> getListFriendByMeId(@Param("meId") Long meId, Pageable pageable);
+    Page<FriendsDto> getListFriendByMeId(@Param("meId") Long meId, Pageable pageable);
+
+    @Query("select new com.huce.doan.mxh.model.dto.FriendsDto(f.id,f.friendId,f.meId,f.friendStatus,p.name,p.avatarUrl) " +
+            " from FriendsEntity f join ProfilesEntity p on f.friendId=p.id where p.phoneNumber=:phoneNumber")
+    Optional<FriendsDto> findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 }

@@ -21,9 +21,11 @@ public class FriendsDto {
     @JsonProperty("me_id")
     private Long meId;
 
-    @JsonProperty("friend_code")
-    private int friendCode;
-
     @JsonProperty("friend_status")
     private FriendStatusEnum friendStatus;
+
+    private String name;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 }

@@ -14,13 +14,12 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -33,13 +32,14 @@ public class PostsServiceImpl implements PostsService {
 
     @Override
     public Data getPost(Long id) {
-        PostsEntity postsEntity = postsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return response.responseData(mapper.map(postsEntity, PostsDto.class));
+        Optional<PostsEntity> postsEntity = postsRepository.findById(id);
+
+        return postsEntity.map(data -> response.responseData("Get post successfully", mapper.map(data, PostsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
     public ListData getByAuthorId(Long id, int page, int pageSize) {
-        Page<PostsEntity> posts = postsRepository.findByAuthorId(id, PageRequest.of(page, pageSize));
+        Page<PostsDto> posts = postsRepository.getListPostsByAuthorId(id, PageRequest.of(page, pageSize));
 
         return response.responseListData(posts.getContent(), new Pagination(posts.getNumber(), posts.getSize(), posts.getTotalPages(),
                 (int) posts.getTotalElements()));
@@ -48,6 +48,7 @@ public class PostsServiceImpl implements PostsService {
     @Override
     public Data createPost(PostsDto post, MultipartFile picture) {
         PostsEntity postsEntity = new PostsEntity().mapperPostsDto(post);
+        postsEntity.setPostingTime(LocalDateTime.now());
 
         if (picture != null) {
             try {
@@ -59,32 +60,40 @@ public class PostsServiceImpl implements PostsService {
             }
         }
 
-        return response.responseData(mapper.map(postsRepository.save(postsEntity), PostsDto.class));
+        return response.responseData("Create post successfully", mapper.map(postsRepository.save(postsEntity), PostsDto.class));
     }
 
     @Override
     public Data updatePost(PostsDto post, MultipartFile picture, Long id) {
         post.setId(id);
-        PostsEntity postsEntity = postsRepository.findById(id).orElseThrow(EntityNotFoundException::new).mapperPostsDto(post);
+        Optional<PostsEntity> postsEntity = postsRepository.findById(id);
 
-        if (picture != null) {
-            try {
-                Map x = this.cloudinary.uploader().upload(picture.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                postsEntity.setPictureUrl(x.get("url").toString());
+        return postsEntity.map(data -> {
+            data = data.mapperPostsDto(post);
+            if (picture != null) {
+                try {
+                    Map x = this.cloudinary.uploader().upload(picture.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                    data.setPictureUrl(x.get("url").toString());
 
-            } catch (Exception e) {
-                System.out.println(e);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
-        }
 
-        return response.responseData(mapper.map(postsRepository.save(postsEntity), PostsDto.class));
+            return response.responseData("Update post successfully", mapper.map(postsRepository.save(data), PostsDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
+
+
     }
 
     @Override
     public Data deletePost(Long id) {
-        PostsEntity postsEntity = postsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        postsRepository.deleteById(id);
+        Optional<PostsEntity> postsEntity = postsRepository.findById(id);
 
-        return response.responseData(mapper.map(postsEntity, PostsDto.class));
+        return postsEntity.map(data -> {
+            postsRepository.deleteById(id);
+
+            return response.responseData("Delete post successfully", mapper.map(data, PostsDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
     }
 }

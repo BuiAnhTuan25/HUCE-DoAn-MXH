@@ -14,6 +14,7 @@ import java.util.List;
 public class ListData {
     private boolean success;
     private String message;
+    private Integer code;
     private List<?> data;
     private Pagination pagination;
 }

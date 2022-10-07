@@ -17,8 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,8 +30,9 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public Data getComment(Long id) {
-        CommentsEntity commentsEntity = commentsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return response.responseData(mapper.map(commentsEntity, CommentsDto.class));
+        Optional<CommentsEntity> commentsEntity = commentsRepository.findById(id);
+
+        return commentsEntity.map(data -> response.responseData("Get comment successfully", mapper.map(commentsEntity, CommentsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
@@ -56,32 +57,36 @@ public class CommentsServiceImpl implements CommentsService {
             }
         }
 
-        return response.responseData(mapper.map(commentsRepository.save(commentsEntity), CommentsDto.class));
+        return response.responseData("Create comment successfully", mapper.map(commentsRepository.save(commentsEntity), CommentsDto.class));
     }
 
     @Override
     public Data updateComment(CommentsDto comment, MultipartFile picture, Long id) {
         comment.setId(id);
-        CommentsEntity commentsEntity = commentsRepository.findById(id).orElseThrow(EntityNotFoundException::new).mapperCommentsDto(comment);
+        Optional<CommentsEntity> commentsEntity = commentsRepository.findById(id);
 
-        if (picture != null) {
-            try {
-                Map x = this.cloudinary.uploader().upload(picture.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                commentsEntity.setPictureUrl(x.get("url").toString());
+        return commentsEntity.map(data -> {
+            data = data.mapperCommentsDto(comment);
+            if (picture != null) {
+                try {
+                    Map x = this.cloudinary.uploader().upload(picture.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                    data.setPictureUrl(x.get("url").toString());
 
-            } catch (Exception e) {
-                System.out.println(e);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
-        }
-
-        return response.responseData(mapper.map(commentsRepository.save(commentsEntity), CommentsDto.class));
+            return response.responseData("Update comment successfully", mapper.map(commentsRepository.save(data), CommentsDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
     public Data deleteComment(Long id) {
-        CommentsEntity commentsEntity = commentsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        commentsRepository.deleteById(id);
+        Optional<CommentsEntity> commentsEntity = commentsRepository.findById(id);
 
-        return response.responseData(mapper.map(commentsEntity, CommentsDto.class));
+        return commentsEntity.map(data -> {
+            commentsRepository.deleteById(id);
+            return response.responseData("Delete comment successfully", mapper.map(data, CommentsDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
     }
 }

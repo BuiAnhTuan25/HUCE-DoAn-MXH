@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -26,7 +27,7 @@ public class MessagesServiceImpl implements MessagesService {
     private final Response response;
 
     @Override
-    public ListData getBySenderIdAndReceiverId(Long senderId,Long receiverId, int page, int pageSize){
+    public ListData getBySenderIdAndReceiverId(Long senderId, Long receiverId, int page, int pageSize) {
         Page<MessageResponse> messages = messagesRepository.getListMessageBySenderAndReceiver(senderId, receiverId, PageRequest.of(page, pageSize));
 
         return response.responseListData(messages.getContent(), new Pagination(messages.getNumber(), messages.getSize(), messages.getTotalPages(),
@@ -34,7 +35,7 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public ListData getByReceiverId(Long receiverId, int page, int pageSize){
+    public ListData getByReceiverId(Long receiverId, int page, int pageSize) {
         Page<MessageResponse> messages = messagesRepository.getListMessageByReceiver(receiverId, PageRequest.of(page, pageSize));
 
         return response.responseListData(messages.getContent(), new Pagination(messages.getNumber(), messages.getSize(), messages.getTotalPages(),
@@ -42,19 +43,21 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public Data createMessage(MessagesDto message){
+    public Data createMessage(MessagesDto message) {
         message.setSendTime(LocalDateTime.now());
         MessagesEntity messagesEntity = new MessagesEntity().mapperMessagesDto(message);
         messagesEntity.setSendTime(LocalDateTime.now());
 
-        return response.responseData(mapper.map(messagesRepository.save(messagesEntity),MessagesDto.class));
+        return response.responseData("Create message successfully", mapper.map(messagesRepository.save(messagesEntity), MessagesDto.class));
     }
 
     @Override
-    public Data deleteMessage(Long id){
-        MessagesEntity messagesEntity = messagesRepository.findById(id).orElseThrow(EntityExistsException::new);
-        messagesRepository.deleteById(id);
+    public Data deleteMessage(Long id) {
+        Optional<MessagesEntity> messagesEntity = messagesRepository.findById(id);
 
-        return response.responseData(mapper.map(messagesEntity,MessagesDto.class));
+        return messagesEntity.map(data -> {
+            messagesRepository.deleteById(id);
+            return response.responseData("Delete message successfully", mapper.map(messagesEntity, MessagesDto.class));
+        }).orElseGet(() -> response.responseError("Entity not found"));
     }
 }

@@ -12,5 +12,6 @@ import lombok.Setter;
 public class Data {
     private boolean success;
     private String message;
+    private Integer code;
     private Object data;
 }
