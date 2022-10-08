@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface ProfilesRepository extends JpaRepository<ProfilesEntity, Long> {
     Optional<ProfilesEntity> findByIdAndStatus(@Param("id") Long id, @Param("status") StatusEnum status);
+
+    Optional<ProfilesEntity> findByPhoneNumber(@Param("phone_number") String phoneNumber);
 }

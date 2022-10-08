@@ -180,36 +180,6 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
-    public Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException {
-        UsersEntity user = usersRepository.findByEmail(mail);
-        if (user == null) return response.responseError("Email not found");
-
-        user.setUpdatePasswordToken(RandomString.make(64));
-        usersRepository.save(user);
-//
-        Map<String, Object> props = new HashMap<>();
-        props.put("name", user.getUsername());
-        props.put("url", siteUrl.append(user.getUpdatePasswordToken()).toString());
-
-        mailService.sendMail(props, user.getEmail(), "updatePassword", "Đổi mật khẩu");
-        return response.responseData("Update password successfully", siteUrl);
-    }
-
-    @Override
-    public Data updatePassword(String code, String password) {
-        Optional<UsersEntity> optionalUser = usersRepository.findByUpdatePasswordToken(code);
-        if (!optionalUser.isPresent()) {
-            return response.responseError("Password token not found");
-        }
-
-        UsersEntity user = optionalUser.get();
-        user.setPassword(passwordEncoder.encode(password));
-        user.setUpdatePasswordToken(null);
-        usersRepository.save(user);
-        return response.responseData("Update password successfully", null);
-    }
-
-    @Override
     public Data forgotPassword(String mail) throws MessagingException {
         UsersEntity user = usersRepository.findByEmail(mail);
         if (user == null) return response.responseError("Email not found");

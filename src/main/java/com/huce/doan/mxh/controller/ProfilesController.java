@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.controller;
 
+import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
 import com.huce.doan.mxh.service.ProfilesService;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,13 @@ public class ProfilesController {
             @PathVariable Long id
     ) {
         return new ResponseEntity<>(profilesService.getProfile(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/phone-number")
+    public ResponseEntity<?> findProfileByPhoneNumberAndStatus(
+            @RequestParam("phone_number") String phoneNumber
+            ) {
+        return new ResponseEntity<>(profilesService.findByPhoneNumber(phoneNumber), HttpStatus.OK);
     }
 
     @PostMapping("")

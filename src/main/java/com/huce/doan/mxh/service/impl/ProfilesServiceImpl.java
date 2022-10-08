@@ -34,6 +34,13 @@ public class ProfilesServiceImpl implements ProfilesService {
     }
 
     @Override
+    public Data findByPhoneNumber(String phoneNumber){
+        Optional<ProfilesEntity> profilesEntity = profilesRepository.findByPhoneNumber(phoneNumber);
+
+        return profilesEntity.map(data->response.responseData("Get profile successfully", mapper.map(data, ProfilesDto.class))).orElseGet(() -> response.responseError("Entity not found"));
+    }
+
+    @Override
     public Data createProfile(ProfilesDto profile, MultipartFile avatar) {
         ProfilesEntity profilesEntity = new ProfilesEntity().mapperProfilesDto(profile);
         profilesEntity.setStatus(StatusEnum.ACTIVE);

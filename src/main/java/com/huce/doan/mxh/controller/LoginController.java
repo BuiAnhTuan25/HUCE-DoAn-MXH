@@ -75,16 +75,6 @@ public class LoginController {
         return ResponseEntity.ok(userService.verify(code));
     }
 
-    @GetMapping("/update-password-token")
-    public ResponseEntity<?> updatePasswordToken(@RequestParam String mail) throws MessagingException {
-        return ResponseEntity.ok(userService.updatePasswordToken(mail, new StringBuffer("http://localhost:4200/update_password_token?code=")));
-    }
-
-    @PostMapping("/confirm/update-password-token")
-    public ResponseEntity<?> updatePassword(@RequestParam String code, @RequestParam String password) {
-        return ResponseEntity.ok(userService.updatePassword(code, password));
-    }
-
     @PutMapping("/change-password/{id}")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody UpdatePasswordDto passwordDto) {
         return ResponseEntity.ok(userService.changePassword(id, passwordDto));

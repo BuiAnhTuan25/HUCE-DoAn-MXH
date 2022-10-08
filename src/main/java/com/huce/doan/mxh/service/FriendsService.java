@@ -16,6 +16,4 @@ public interface FriendsService {
     Data deleteFriend(Long id);
 
     Data findByMeIdAndFriendId(Long meId, Long friendId);
-
-    Data findByPhoneNumber(String phoneNumber);
 }
