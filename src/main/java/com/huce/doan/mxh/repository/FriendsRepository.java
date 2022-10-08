@@ -20,8 +20,4 @@ public interface FriendsRepository extends JpaRepository<FriendsEntity, Long> {
     @Query("select new com.huce.doan.mxh.model.dto.FriendsDto(f.id,f.friendId,f.meId,f.friendStatus,p.name,p.avatarUrl) " +
             " from FriendsEntity f join ProfilesEntity p on f.friendId=p.id where f.meId=:meId")
     Page<FriendsDto> getListFriendByMeId(@Param("meId") Long meId, Pageable pageable);
-
-    @Query("select new com.huce.doan.mxh.model.dto.FriendsDto(f.id,f.friendId,f.meId,f.friendStatus,p.name,p.avatarUrl) " +
-            " from FriendsEntity f join ProfilesEntity p on f.friendId=p.id where p.phoneNumber=:phoneNumber")
-    Optional<FriendsDto> findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 }

@@ -40,9 +40,6 @@ public class UsersEntity {
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "update_password_token", length = 64)
-    private String updatePasswordToken;
-
     @Column(name = "provider")
     private ProviderEnum provider;
 

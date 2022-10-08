@@ -14,6 +14,6 @@ public interface PostsRepository extends JpaRepository<PostsEntity, Long> {
     Page<PostsEntity> findByAuthorId(@Param("author_id") Long authorId,Pageable pageable);
 
     @Query("select new com.huce.doan.mxh.model.dto.PostsDto(o.id,o.authorId,p.name,p.avatarUrl,o.content,o.pictureUrl,o.countLikes,o.privacy,o.postingTime) " +
-            " from PostsEntity o join ProfilesEntity p on o.authorId=p.id where o.authorId=:authorId")
+            " from PostsEntity o join ProfilesEntity p on o.authorId=p.id where o.authorId=:authorId order by o.postingTime desc")
     Page<PostsDto> getListPostsByAuthorId(@Param("authorId") Long authorId, Pageable pageable);
 }

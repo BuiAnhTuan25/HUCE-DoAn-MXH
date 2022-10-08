@@ -27,10 +27,6 @@ public interface UsersService {
 
     Data verify(String verificationCode);
 
-    Data updatePasswordToken(String mail, StringBuffer siteUrl) throws MessagingException;
-
-    Data updatePassword(String code, String password);
-
     Data changePassword(Long id, UpdatePasswordDto passwordDto);
 
     Data forgotPassword(String mail) throws MessagingException;

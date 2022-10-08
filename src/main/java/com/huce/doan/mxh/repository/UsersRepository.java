@@ -22,7 +22,5 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Long> {
     @Query("SELECT u FROM UsersEntity u WHERE u.username = :username")
     UsersEntity getUserByUsername(@Param("username") String username);
 
-    Optional<UsersEntity> findByUpdatePasswordToken(String token);
-
     Optional<UsersEntity> findByVerificationCode(String verificationCode);
 }

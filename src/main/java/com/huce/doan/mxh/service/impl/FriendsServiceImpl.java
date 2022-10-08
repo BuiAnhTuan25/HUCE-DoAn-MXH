@@ -41,12 +41,6 @@ public class FriendsServiceImpl implements FriendsService {
     }
 
     @Override
-    public Data findByPhoneNumber(String phoneNumber) {
-        Optional<FriendsDto> friendsDto = friendsRepository.findByPhoneNumber(phoneNumber);
-        return friendsDto.map(data -> response.responseData("Get friend successfully", data)).orElseGet(() -> response.responseError("Entity not found"));
-    }
-
-    @Override
     public ListData getListFriendByMeId(Long id, int page, int pageSize) {
         Page<FriendsDto> friends = friendsRepository.getListFriendByMeId(id, PageRequest.of(page, pageSize));
 
@@ -72,7 +66,12 @@ public class FriendsServiceImpl implements FriendsService {
     public Data updateFriend(FriendsDto friend, Long id) {
         friend.setId(id);
         Optional<FriendsEntity> friendsEntity = friendsRepository.findById(id);
-        return friendsEntity.map(data -> response.responseData("Update friend successfully", mapper.map(friendsRepository.save(data), FriendsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
+        if(friend.getFriendStatus().equals(FriendStatusEnum.FRIENDED)){
+            FriendsEntity friendConfirm = friendsRepository.findByMeIdAndFriendId(friend.getFriendId(),friend.getMeId()).get();
+            friendConfirm.setFriendStatus(FriendStatusEnum.FRIENDED);
+            friendsRepository.save(friendConfirm);
+        }
+        return friendsEntity.map(data -> response.responseData("Update friend successfully", mapper.map(friendsRepository.save(data.mapperFriendsDto(friend)), FriendsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
@@ -80,13 +79,10 @@ public class FriendsServiceImpl implements FriendsService {
         Optional<FriendsEntity> friendsEntity = friendsRepository.findById(id);
 
         return friendsEntity.map(data -> {
-            Optional<FriendsEntity> friend = friendsRepository.findByMeIdAndFriendId(data.getFriendId(), data.getMeId());
-            friend.map(dt -> {
+            FriendsEntity friend = friendsRepository.findByMeIdAndFriendId(data.getFriendId(), data.getMeId()).get();
                 friendsRepository.deleteById(id);
-                friendsRepository.deleteById(dt.getId());
+                friendsRepository.deleteById(friend.getId());
                 return response.responseData("Delete friend successfully", mapper.map(data, FriendsDto.class));
-            });
-            return response.responseError("Entity not found");
         }).orElseGet(() -> response.responseError("Entity not found"));
     }
 }
