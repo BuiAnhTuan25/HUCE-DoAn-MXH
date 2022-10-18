@@ -1,10 +1,16 @@
 package com.huce.doan.mxh.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huce.doan.mxh.model.dto.CommentsDto;
+import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.service.CommentsService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +44,18 @@ public class CommentsController {
     ) {
         return new ResponseEntity<>(commentsService.createComment(comment, picture), HttpStatus.CREATED);
     }
+
+//    @MessageMapping("/comment/{id}")
+//    public void sendMessage(
+//            @DestinationVariable Long id,
+//            String comment
+//    )throws JsonProcessingException {
+//        CommentsDto commentsDto = new ObjectMapper().readValue(comment, CommentsDto.class);
+//
+//        CommentsDto commentSave = (CommentsDto) commentsService.createComment(commentsDto).getData();
+//        simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getSenderId(),msgSave);
+//        simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getReceiverId(),msgSave);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateComment(

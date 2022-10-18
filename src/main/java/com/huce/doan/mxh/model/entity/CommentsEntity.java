@@ -24,8 +24,8 @@ public class CommentsEntity {
     @Column(name = "post_id")
     private Long postId;
 
-    @Column(name = "author_id")
-    private Long authorId;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "content")
     private String content;
@@ -39,7 +39,7 @@ public class CommentsEntity {
     public CommentsEntity mapperCommentsDto(CommentsDto comment){
         this.id = comment.getId();
         this.postId = comment.getPostId();
-        this.authorId = comment.getAuthorId();
+        this.userId = comment.getUserId();
         this.content = comment.getContent();
         this.pictureUrl = comment.getPictureUrl();
         this.commentTime = comment.getCommentTime();

@@ -7,9 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface PostsService {
-    Data getPost(Long id);
+    Data getPost(Long id, Long idMe);
 
-    ListData getByAuthorId(Long userId, int page, int pageSize);
+    ListData getMyPosts(Long userId, int page, int pageSize);
+
+    ListData getNewsFeed(Long userId, int page, int pageSize);
 
     Data createPost(PostsDto post, MultipartFile picture);
 

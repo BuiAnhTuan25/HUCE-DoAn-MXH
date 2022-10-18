@@ -14,9 +14,11 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,6 +29,7 @@ public class CommentsServiceImpl implements CommentsService {
     private final ModelMapper mapper;
     private final Cloudinary cloudinary;
     private final Response response;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Data getComment(Long id) {
@@ -37,7 +40,7 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public ListData getByPostId(Long id, int page, int pageSize) {
-        Page<CommentsEntity> comments = commentsRepository.findByPostId(id, PageRequest.of(page, pageSize));
+        Page<CommentsDto> comments = commentsRepository.getListCommentByPostId(id, PageRequest.of(page, pageSize));
 
         return response.responseListData(comments.getContent(), new Pagination(comments.getNumber(), comments.getSize(), comments.getTotalPages(),
                 (int) comments.getTotalElements()));
@@ -46,6 +49,7 @@ public class CommentsServiceImpl implements CommentsService {
     @Override
     public Data createComment(CommentsDto comment, MultipartFile picture) {
         CommentsEntity commentsEntity = new CommentsEntity().mapperCommentsDto(comment);
+        commentsEntity.setCommentTime(LocalDateTime.now());
 
         if (picture != null) {
             try {
@@ -56,8 +60,14 @@ public class CommentsServiceImpl implements CommentsService {
                 System.out.println(e);
             }
         }
+        commentsEntity = commentsRepository.save(commentsEntity);
+        comment.setId(commentsEntity.getId());
+        comment.setCommentTime(commentsEntity.getCommentTime());
+        comment.setPictureUrl(commentsEntity.getPictureUrl());
 
-        return response.responseData("Create comment successfully", mapper.map(commentsRepository.save(commentsEntity), CommentsDto.class));
+        simpMessagingTemplate.convertAndSend("/topic/message",comment);
+
+        return response.responseData("Create comment successfully", comment);
     }
 
     @Override

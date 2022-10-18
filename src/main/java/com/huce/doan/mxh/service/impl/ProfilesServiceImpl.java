@@ -30,7 +30,8 @@ public class ProfilesServiceImpl implements ProfilesService {
     public Data getProfile(Long id) {
         Optional<ProfilesEntity> profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
 
-        return profilesEntity.map(data -> response.responseData("Get profile successfully", mapper.map(data, ProfilesDto.class))).orElseGet(() -> response.responseError("Entity not found"));
+        return profilesEntity.map(data -> response.responseData("Get profile successfully", mapper.map(data, ProfilesDto.class)))
+                .orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override

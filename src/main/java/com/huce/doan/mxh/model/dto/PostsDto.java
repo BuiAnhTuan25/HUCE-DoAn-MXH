@@ -44,8 +44,24 @@ public class PostsDto {
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @JsonProperty("posting_time")
     private LocalDateTime postingTime;
+
+    @JsonProperty("is_like")
+    private Boolean isLike;
+
+    public PostsDto(Long id, Long authorId, String name, String avatarUrl, String content, String pictureUrl, Integer countLikes, PrivacyEnum privacy, LocalDateTime postingTime, Long likeId) {
+        this.id=id;
+        this.authorId=authorId;
+        this.name=name;
+        this.avatarUrl=avatarUrl;
+        this.content=content;
+        this.pictureUrl=pictureUrl;
+        this.countLikes=countLikes;
+        this.privacy=privacy;
+        this.postingTime=postingTime;
+        this.isLike= likeId != null;
+    }
 }
