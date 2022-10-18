@@ -23,8 +23,6 @@ public class MessagesController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    private final ModelMapper mapper;
-
     @GetMapping("/history/{senderId}/{receiverId}")
     public ResponseEntity<?> getBySenderIdAndReceiverId(
             @PathVariable Long senderId,
@@ -42,6 +40,15 @@ public class MessagesController {
             @RequestParam(name = "page-size") int pageSize
     ) {
         return new ResponseEntity<>(messagesService.getByReceiverId(receiverId, page, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/friend-chat/{id}")
+    public ResponseEntity<?> getListFriendChat(
+            @PathVariable Long id,
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "page-size") int pageSize
+    ) {
+        return new ResponseEntity<>(messagesService.getListFriendChat(id, page, pageSize), HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -64,9 +71,8 @@ public class MessagesController {
             String message
     )throws JsonProcessingException {
         MessagesDto messagesDto = new ObjectMapper().readValue(message, MessagesDto.class);
-        System.out.println(messagesDto.getContent());
 
-        MessagesDto msgSave = mapper.map(messagesService.createMessage(messagesDto).getData(),MessagesDto.class);
+        MessagesDto msgSave = (MessagesDto) messagesService.createMessage(messagesDto).getData();
         simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getSenderId(),msgSave);
         simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getReceiverId(),msgSave);
     }

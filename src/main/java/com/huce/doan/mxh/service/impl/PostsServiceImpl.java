@@ -31,15 +31,23 @@ public class PostsServiceImpl implements PostsService {
     private final Response response;
 
     @Override
-    public Data getPost(Long id) {
-        Optional<PostsEntity> postsEntity = postsRepository.findById(id);
+    public Data getPost(Long id,Long idMe) {
+        Optional<PostsDto> postsDto = postsRepository.getPost(id, idMe);
 
-        return postsEntity.map(data -> response.responseData("Get post successfully", mapper.map(data, PostsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
+        return postsDto.map(data -> response.responseData("Get post successfully", data)).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
-    public ListData getByAuthorId(Long id, int page, int pageSize) {
-        Page<PostsDto> posts = postsRepository.getListPostsByAuthorId(id, PageRequest.of(page, pageSize));
+    public ListData getMyPosts(Long id, int page, int pageSize) {
+        Page<PostsDto> posts = postsRepository.getMyPosts(id, PageRequest.of(page, pageSize));
+
+        return response.responseListData(posts.getContent(), new Pagination(posts.getNumber(), posts.getSize(), posts.getTotalPages(),
+                (int) posts.getTotalElements()));
+    }
+
+    @Override
+    public ListData getNewsFeed(Long id, int page, int pageSize) {
+        Page<PostsDto> posts = postsRepository.getNewsFeed(id, PageRequest.of(page, pageSize));
 
         return response.responseListData(posts.getContent(), new Pagination(posts.getNumber(), posts.getSize(), posts.getTotalPages(),
                 (int) posts.getTotalElements()));

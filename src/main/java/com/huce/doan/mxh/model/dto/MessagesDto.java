@@ -39,4 +39,9 @@ public class MessagesDto {
 
     @JsonProperty("message_type")
     private MessageTypeEnum messageType;
+
+    private String name;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 }

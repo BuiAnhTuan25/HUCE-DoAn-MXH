@@ -12,4 +12,5 @@ public interface MessagesService {
     Data createMessage(MessagesDto post);
 
     Data deleteMessage(Long id);
+    ListData getListFriendChat(Long id, int page, int pageSize);
 }

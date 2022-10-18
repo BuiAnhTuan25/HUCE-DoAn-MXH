@@ -1,6 +1,6 @@
 package com.huce.doan.mxh.service.impl;
 
-import com.huce.doan.mxh.model.dto.MessageResponse;
+import com.huce.doan.mxh.model.dto.FriendChatDto;
 import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.model.entity.MessagesEntity;
 import com.huce.doan.mxh.model.response.Data;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -28,15 +27,23 @@ public class MessagesServiceImpl implements MessagesService {
 
     @Override
     public ListData getBySenderIdAndReceiverId(Long senderId, Long receiverId, int page, int pageSize) {
-        Page<MessageResponse> messages = messagesRepository.getListMessageBySenderAndReceiver(senderId, receiverId, PageRequest.of(page, pageSize));
+        Page<MessagesDto> messages = messagesRepository.getListMessageBySenderAndReceiver(senderId, receiverId, PageRequest.of(page, pageSize));
 
         return response.responseListData(messages.getContent(), new Pagination(messages.getNumber(), messages.getSize(), messages.getTotalPages(),
                 (int) messages.getTotalElements()));
     }
 
     @Override
+    public ListData getListFriendChat(Long id, int page, int pageSize){
+        Page<FriendChatDto> friendChatDto = messagesRepository.getListFriendChat(id, PageRequest.of(page, pageSize));
+
+        return response.responseListData(friendChatDto.getContent(), new Pagination(friendChatDto.getNumber(), friendChatDto.getSize(), friendChatDto.getTotalPages(),
+                (int) friendChatDto.getTotalElements()));
+    }
+
+    @Override
     public ListData getByReceiverId(Long receiverId, int page, int pageSize) {
-        Page<MessageResponse> messages = messagesRepository.getListMessageByReceiver(receiverId, PageRequest.of(page, pageSize));
+        Page<MessagesDto> messages = messagesRepository.getListMessageByReceiver(receiverId, PageRequest.of(page, pageSize));
 
         return response.responseListData(messages.getContent(), new Pagination(messages.getNumber(), messages.getSize(), messages.getTotalPages(),
                 (int) messages.getTotalElements()));
@@ -44,11 +51,14 @@ public class MessagesServiceImpl implements MessagesService {
 
     @Override
     public Data createMessage(MessagesDto message) {
-        message.setSendTime(LocalDateTime.now());
         MessagesEntity messagesEntity = new MessagesEntity().mapperMessagesDto(message);
         messagesEntity.setSendTime(LocalDateTime.now());
+        messagesEntity = messagesRepository.save(messagesEntity);
 
-        return response.responseData("Create message successfully", mapper.map(messagesRepository.save(messagesEntity), MessagesDto.class));
+        message.setId(messagesEntity.getId());
+        message.setSendTime(messagesEntity.getSendTime());
+
+        return response.responseData("Create message successfully", message);
     }
 
     @Override

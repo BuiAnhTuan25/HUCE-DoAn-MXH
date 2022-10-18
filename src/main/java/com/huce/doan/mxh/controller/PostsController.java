@@ -16,11 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostsController {
     private final PostsService postsService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{idMe}/{id}")
     public ResponseEntity<?> getPost(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @PathVariable Long idMe
     ) {
-        return new ResponseEntity<>(postsService.getPost(id), HttpStatus.OK);
+        return new ResponseEntity<>(postsService.getPost(id,idMe), HttpStatus.OK);
     }
 
     @GetMapping("/author-id/{id}")
@@ -29,7 +30,16 @@ public class PostsController {
             @RequestParam(name = "page") int page,
             @RequestParam(name = "page-size") int pageSize
     ) {
-        return new ResponseEntity<>(postsService.getByAuthorId(id, page, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(postsService.getMyPosts(id, page, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/news-feed/{id}")
+    public ResponseEntity<?> getNewsFeed(
+            @PathVariable Long id,
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "page-size") int pageSize
+    ) {
+        return new ResponseEntity<>(postsService.getNewsFeed(id, page, pageSize), HttpStatus.OK);
     }
 
     @PostMapping("")
