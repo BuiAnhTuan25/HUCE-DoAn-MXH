@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,7 @@ public class FriendChatDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @JsonProperty("send_time")
     private LocalDateTime sendTime;
+
+    @JsonProperty("active_status")
+    private ActiveStatusEnum activeStatus;
 }

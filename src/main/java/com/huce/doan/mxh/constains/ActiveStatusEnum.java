@@ -5,10 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum MessageTypeEnum {
-    MESSAGE(0),
-    NOTIFICATION(1),
-    ACTIVE_STATUS(2);
+public enum ActiveStatusEnum {
+    OFFLINE(0),
+    ONLINE(1);
 
-    private final int type;
+    private final int value;
 }

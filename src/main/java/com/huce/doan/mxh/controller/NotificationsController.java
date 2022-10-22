@@ -6,6 +6,6 @@
 //
 //@CrossOrigin
 //@RestController
-//@RequestMapping("api/v1.0/notifications")
+//@RequestMapping("api/v1/notifications")
 //public class NotificationsController {
 //}

@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1.0/comments")
+@RequestMapping("api/v1/comments")
 public class CommentsController {
     private final CommentsService commentsService;
 

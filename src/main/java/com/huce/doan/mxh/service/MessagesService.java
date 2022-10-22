@@ -12,5 +12,9 @@ public interface MessagesService {
     Data createMessage(MessagesDto post);
 
     Data deleteMessage(Long id);
+
     ListData getListFriendChat(Long id, int page, int pageSize);
+
+    ListData findFriendChat(Long id,String fullTextSearch, int page, int pageSize);
+
 }

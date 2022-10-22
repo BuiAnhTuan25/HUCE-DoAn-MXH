@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1.0/messages")
+@RequestMapping("api/v1/messages")
 public class MessagesController {
     private final MessagesService messagesService;
 
@@ -49,6 +49,16 @@ public class MessagesController {
             @RequestParam(name = "page-size") int pageSize
     ) {
         return new ResponseEntity<>(messagesService.getListFriendChat(id, page, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{id}")
+    public ResponseEntity<?> findFriendChat(
+            @PathVariable("id") Long id,
+            @RequestParam("full-text-search") String fullTextSearch,
+            @RequestParam("page") int page,
+            @RequestParam("page-size") int pageSize
+    ){
+        return new ResponseEntity<>(messagesService.findFriendChat(id,fullTextSearch,page,pageSize),HttpStatus.OK);
     }
 
     @PostMapping("")

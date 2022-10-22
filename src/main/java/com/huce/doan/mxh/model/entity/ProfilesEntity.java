@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.model.entity;
 
+import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import com.huce.doan.mxh.constains.GenderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
@@ -46,6 +47,9 @@ public class ProfilesEntity {
 
     @Column(name = "status")
     private StatusEnum status;
+
+    @Column(name = "active_status")
+    private ActiveStatusEnum activeStatus;
 
     public ProfilesEntity mapperProfilesDto(ProfilesDto profile) {
         this.id = profile.getId();

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/v1.0")
+@RequestMapping("api/v1")
 public class UploadController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestBody MultipartFile file){

@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.controller;
 
+import com.huce.doan.mxh.constains.FriendStatusEnum;
 import com.huce.doan.mxh.model.dto.FriendsDto;
 import com.huce.doan.mxh.service.FriendsService;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1.0/friends")
+@RequestMapping("api/v1/friends")
 public class FriendsController {
     private final FriendsService friendsService;
 
@@ -32,10 +33,11 @@ public class FriendsController {
     @GetMapping("/me-id/{id}")
     public ResponseEntity<?> getByMeId(
             @PathVariable Long id,
+            @RequestParam("friend-status") FriendStatusEnum friendStatus,
             @RequestParam(name = "page") int page,
             @RequestParam(name = "page-size") int pageSize
     ) {
-        return new ResponseEntity<>(friendsService.getListFriendByMeId(id, page, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(friendsService.getListFriendByMeIdAndFriendStatus(id, friendStatus, page, pageSize), HttpStatus.OK);
     }
 
     @PostMapping("")

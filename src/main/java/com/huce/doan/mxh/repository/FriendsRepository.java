@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.repository;
 
+import com.huce.doan.mxh.constains.FriendStatusEnum;
 import com.huce.doan.mxh.model.dto.FriendsDto;
 import com.huce.doan.mxh.model.entity.FriendsEntity;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,6 @@ public interface FriendsRepository extends JpaRepository<FriendsEntity, Long> {
     Page<FriendsEntity> findByMeId(@Param("me_id") Long meId, Pageable pageable);
 
     @Query("select new com.huce.doan.mxh.model.dto.FriendsDto(f.id,f.friendId,f.meId,f.friendStatus,p.name,p.avatarUrl) " +
-            " from FriendsEntity f join ProfilesEntity p on f.friendId=p.id where f.meId=:meId")
-    Page<FriendsDto> getListFriendByMeId(@Param("meId") Long meId, Pageable pageable);
+            " from FriendsEntity f join ProfilesEntity p on f.friendId=p.id where f.meId=:meId and f.friendStatus=:friendStatus")
+    Page<FriendsDto> getListFriendByMeIdAndFriendStatus(@Param("meId") Long meId, @Param("friendStatus") FriendStatusEnum friendStatus, Pageable pageable);
 }

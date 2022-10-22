@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.controller;
 
+import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
 import com.huce.doan.mxh.service.ProfilesService;
@@ -12,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1.0/profiles")
+@RequestMapping("api/v1/profiles")
 public class ProfilesController {
     private final ProfilesService profilesService;
 
@@ -25,9 +26,19 @@ public class ProfilesController {
 
     @GetMapping("/phone-number")
     public ResponseEntity<?> findProfileByPhoneNumberAndStatus(
-            @RequestParam("phone_number") String phoneNumber
+            @RequestParam("phone-number") String phoneNumber
             ) {
         return new ResponseEntity<>(profilesService.findByPhoneNumber(phoneNumber), HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{id}")
+    public ResponseEntity<?> findProfilesFriendsByNameOrPhoneNumber(
+            @PathVariable("id") Long id,
+            @RequestParam("full-text-search") String fullTextSearch,
+            @RequestParam("page") int page,
+            @RequestParam("page-size") int pageSize
+    ){
+        return new ResponseEntity<>(profilesService.findProfilesFriendsByNameOrPhoneNumber(id,fullTextSearch,page,pageSize),HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -45,6 +56,14 @@ public class ProfilesController {
             @PathVariable Long id
     ) {
         return new ResponseEntity<>(profilesService.updateProfile(profile, avatar, id), HttpStatus.OK);
+    }
+
+    @PutMapping("/active/{id}")
+    public ResponseEntity<?> updateActiveStatus(
+            @PathVariable Long id,
+            @RequestParam("active-status") ActiveStatusEnum activeStatus
+            ){
+        return new ResponseEntity<>(profilesService.updateActiveStatus(id,activeStatus),HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

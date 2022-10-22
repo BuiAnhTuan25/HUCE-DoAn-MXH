@@ -14,7 +14,7 @@ import java.io.UnsupportedEncodingException;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1.0/users")
+@RequestMapping("api/v1/users")
 public class UsersController {
     private final UsersService usersService;
 

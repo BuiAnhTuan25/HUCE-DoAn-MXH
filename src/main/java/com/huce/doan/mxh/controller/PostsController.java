@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1.0/posts")
+@RequestMapping("api/v1/posts")
 public class PostsController {
     private final PostsService postsService;
 

@@ -27,7 +27,7 @@ import java.util.Collections;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/v1.0/auth-social")
+@RequestMapping("api/v1/auth-social")
 public class LoginSocialController {
     @Value("${spring.security.oauth2.client.registration.google.clientId}")
     String googleClientId;

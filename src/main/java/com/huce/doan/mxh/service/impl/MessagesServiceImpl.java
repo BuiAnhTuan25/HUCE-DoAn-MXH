@@ -42,6 +42,14 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
+    public ListData findFriendChat(Long id, String fullTextSearch, int page, int pageSize){
+        Page<FriendChatDto> friendChatDto = messagesRepository.findFriendChat(id, fullTextSearch, PageRequest.of(page, pageSize));
+
+        return response.responseListData(friendChatDto.getContent(), new Pagination(friendChatDto.getNumber(), friendChatDto.getSize(), friendChatDto.getTotalPages(),
+                (int) friendChatDto.getTotalElements()));
+    }
+
+    @Override
     public ListData getByReceiverId(Long receiverId, int page, int pageSize) {
         Page<MessagesDto> messages = messagesRepository.getListMessageByReceiver(receiverId, PageRequest.of(page, pageSize));
 

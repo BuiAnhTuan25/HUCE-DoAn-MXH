@@ -26,7 +26,10 @@ public interface MessagesRepository extends JpaRepository<MessagesEntity, Long> 
             " from MessagesEntity m join ProfilesEntity p on m.senderId=p.id where m.receiverId=:receiverId")
     Page<MessagesDto> getListMessageByReceiver(@Param("receiverId") Long receiverId, Pageable pageable);
 
-    @Query("select new com.huce.doan.mxh.model.dto.FriendChatDto(p.id,p.name,p.avatarUrl,max(m.sendTime)) FROM ProfilesEntity p join  MessagesEntity m on m.senderId=p.id or m.receiverId=p.id where (m.senderId=:idMe or m.receiverId=:idMe) and p.id <>:idMe group by p.id order by max(m.sendTime) desc")
+    @Query("select new com.huce.doan.mxh.model.dto.FriendChatDto(p.id,p.name,p.avatarUrl,max(m.sendTime),p.activeStatus) FROM ProfilesEntity p join  MessagesEntity m on m.senderId=p.id or m.receiverId=p.id where (m.senderId=:idMe or m.receiverId=:idMe) and p.id <>:idMe group by p.id order by max(m.sendTime) desc")
     Page<FriendChatDto> getListFriendChat(@Param("idMe") Long idMe, Pageable pageable);
+
+    @Query("select new com.huce.doan.mxh.model.dto.FriendChatDto(p.id,p.name,p.avatarUrl,max(m.sendTime),p.activeStatus) FROM ProfilesEntity p join  MessagesEntity m on m.senderId=p.id or m.receiverId=p.id where (m.senderId=:idMe or m.receiverId=:idMe) and p.id <>:idMe and (p.name like %:fullTextSearch% or p.phoneNumber like %:fullTextSearch%) group by p.id order by max(m.sendTime) desc")
+    Page<FriendChatDto> findFriendChat(@Param("idMe") Long idMe, @Param("fullTextSearch") String fullTextSearch, Pageable pageable);
 
 }

@@ -27,7 +27,7 @@ import java.io.UnsupportedEncodingException;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/v1.0/auth")
+@RequestMapping("api/v1/auth")
 public class LoginController {
     private final AuthenticationManager authenticationManager;
 

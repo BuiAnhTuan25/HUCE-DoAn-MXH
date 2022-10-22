@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.model.entity;
 
+import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import com.huce.doan.mxh.constains.ProviderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.UsersDto;

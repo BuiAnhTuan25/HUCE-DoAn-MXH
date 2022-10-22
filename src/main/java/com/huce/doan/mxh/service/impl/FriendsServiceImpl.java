@@ -41,8 +41,8 @@ public class FriendsServiceImpl implements FriendsService {
     }
 
     @Override
-    public ListData getListFriendByMeId(Long id, int page, int pageSize) {
-        Page<FriendsDto> friends = friendsRepository.getListFriendByMeId(id, PageRequest.of(page, pageSize));
+    public ListData getListFriendByMeIdAndFriendStatus(Long id,FriendStatusEnum friendStatus, int page, int pageSize) {
+        Page<FriendsDto> friends = friendsRepository.getListFriendByMeIdAndFriendStatus(id, friendStatus, PageRequest.of(page, pageSize));
 
         return response.responseListData(friends.getContent(), new Pagination(friends.getNumber(), friends.getSize(), friends.getTotalPages(),
                 (int) friends.getTotalElements()));
