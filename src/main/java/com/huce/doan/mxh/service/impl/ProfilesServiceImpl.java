@@ -5,15 +5,18 @@ import com.cloudinary.utils.ObjectUtils;
 import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import com.huce.doan.mxh.constains.MessageTypeEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
+import com.huce.doan.mxh.model.dto.FriendsDto;
 import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.model.dto.ProfileSearchRequest;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
+import com.huce.doan.mxh.model.entity.FriendsEntity;
 import com.huce.doan.mxh.model.entity.MessagesEntity;
 import com.huce.doan.mxh.model.entity.ProfilesEntity;
 import com.huce.doan.mxh.model.response.Data;
 import com.huce.doan.mxh.model.response.ListData;
 import com.huce.doan.mxh.model.response.Pagination;
 import com.huce.doan.mxh.model.response.Response;
+import com.huce.doan.mxh.repository.FriendsRepository;
 import com.huce.doan.mxh.repository.ProfilesRepository;
 import com.huce.doan.mxh.repository.custom.ProfilesRepositoryCustom;
 import com.huce.doan.mxh.service.ProfilesService;
@@ -25,6 +28,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +40,7 @@ public class ProfilesServiceImpl implements ProfilesService {
 
     private final ProfilesRepository profilesRepository;
     private final ProfilesRepositoryCustom profilesRepositoryCustom;
+    private FriendsRepository friendsRepository;
     private final ModelMapper mapper;
     private final Response response;
     private final Cloudinary cloudinary;
@@ -53,6 +58,10 @@ public class ProfilesServiceImpl implements ProfilesService {
     public ListData search(ProfileSearchRequest request, int page, int pageSize) {
         List<ProfilesEntity> profiles = profilesRepositoryCustom.search(request, page, pageSize);
         List<ProfilesDto> profilesDto = profiles.stream().map(p -> this.mapper.map(p, ProfilesDto.class)).collect(Collectors.toList());
+        profilesDto.forEach(p ->{
+            Optional<FriendsEntity> friend = this.friendsRepository.findByMeIdAndFriendId(request.getIdMe(), p.getId());
+            friend.ifPresent(friendsEntity -> p.enrichFriend(this.mapper.map(friendsEntity, FriendsDto.class)));
+        });
         int total = profilesRepositoryCustom.count(request).intValue();
         int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
         return new ListData(true, "Search profile successfully",200, profilesDto, new Pagination(page, pageSize, totalPage, total));

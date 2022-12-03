@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import com.huce.doan.mxh.constains.GenderEnum;
+import com.huce.doan.mxh.model.entity.FriendsEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,4 +48,22 @@ public class ProfilesDto {
 
     @JsonProperty("active_status")
     private ActiveStatusEnum activeStatus;
+
+    private FriendsDto friend;
+
+    public ProfilesDto(Long id, String name, String phoneNumber, LocalDate birthday, GenderEnum gender, String address, String avatarUrl, Boolean isPublic, ActiveStatusEnum activeStatus) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.address = address;
+        this.avatarUrl = avatarUrl;
+        this.isPublic = isPublic;
+        this.activeStatus = activeStatus;
+    }
+
+    public void enrichFriend(FriendsDto friend) {
+        this.friend = friend;
+    }
 }

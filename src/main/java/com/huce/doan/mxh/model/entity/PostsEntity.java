@@ -38,7 +38,7 @@ public class PostsEntity {
     private String pictureUrl;
 
     @Column(name = "count_likes")
-    private Integer countLikes;
+    private int countLikes;
 
     @Column(name = "privacy")
     private PrivacyEnum privacy;

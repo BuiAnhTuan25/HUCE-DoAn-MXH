@@ -37,7 +37,7 @@ public class PostsDto {
     private String pictureUrl;
 
     @JsonProperty("count_likes")
-    private Integer countLikes;
+    private int countLikes;
 
     @JsonProperty("privacy")
     private PrivacyEnum privacy;
@@ -47,8 +47,8 @@ public class PostsDto {
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("posting_time")
     private LocalDateTime postingTime;
 

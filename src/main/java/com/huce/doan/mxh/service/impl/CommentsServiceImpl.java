@@ -4,11 +4,11 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.huce.doan.mxh.constains.MessageStatusEnum;
 import com.huce.doan.mxh.model.dto.CommentsDto;
-import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.model.dto.NotificationsDto;
 import com.huce.doan.mxh.model.entity.CommentsEntity;
 import com.huce.doan.mxh.model.entity.NotificationsEntity;
 import com.huce.doan.mxh.model.entity.PostsEntity;
+import com.huce.doan.mxh.model.entity.ProfilesEntity;
 import com.huce.doan.mxh.model.response.Data;
 import com.huce.doan.mxh.model.response.ListData;
 import com.huce.doan.mxh.model.response.Pagination;
@@ -16,6 +16,7 @@ import com.huce.doan.mxh.model.response.Response;
 import com.huce.doan.mxh.repository.CommentsRepository;
 import com.huce.doan.mxh.repository.NotificationsRepository;
 import com.huce.doan.mxh.repository.PostsRepository;
+import com.huce.doan.mxh.repository.ProfilesRepository;
 import com.huce.doan.mxh.service.CommentsService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -34,6 +35,7 @@ import java.util.Optional;
 public class CommentsServiceImpl implements CommentsService {
     private final CommentsRepository commentsRepository;
     private final PostsRepository postsRepository;
+    private final ProfilesRepository profilesRepository;
     private final NotificationsRepository notificationsRepository;
     private final ModelMapper mapper;
     private final Cloudinary cloudinary;
@@ -75,9 +77,10 @@ public class CommentsServiceImpl implements CommentsService {
         comment.setPictureUrl(commentsEntity.getPictureUrl());
 
         PostsEntity post = postsRepository.getById(commentsEntity.getPostId());
+        ProfilesEntity profile = profilesRepository.findById(commentsEntity.getUserId()).get();
         if(!post.getAuthorId().equals(commentsEntity.getUserId())){
             NotificationsEntity notification = new NotificationsEntity();
-            notification.setContent("Someone commented your post");
+            notification.setContent(profile.getName() + " commented your post");
             notification.setReceiverId(post.getAuthorId());
             notification.setPostId(post.getId());
             notification.setSendTime(LocalDateTime.now());

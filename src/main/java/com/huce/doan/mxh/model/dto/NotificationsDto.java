@@ -32,6 +32,9 @@ public class NotificationsDto {
     @JsonProperty("post_id")
     private Long postId;
 
+    @JsonProperty("friend_id")
+    private Long friendId;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd hh:mm:ss")

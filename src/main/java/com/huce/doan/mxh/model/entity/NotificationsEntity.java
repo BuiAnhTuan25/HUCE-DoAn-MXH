@@ -42,6 +42,9 @@ public class NotificationsEntity {
     @Column(name = "post_id")
     private Long postId;
 
+    @Column(name = "friend_id")
+    private Long friendId;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd hh:mm:ss")
@@ -59,6 +62,7 @@ public class NotificationsEntity {
         this.sendTime = notification.getSendTime();
         this.status = notification.getStatus();
         this.postId = notification.getPostId();
+        this.friendId = notification.getFriendId();
 
         return this;
     }

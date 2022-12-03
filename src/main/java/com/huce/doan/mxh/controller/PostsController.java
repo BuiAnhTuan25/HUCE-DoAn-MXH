@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @CrossOrigin
 @RestController
 @AllArgsConstructor
@@ -22,7 +25,7 @@ public class PostsController {
             @PathVariable Long id,
             @PathVariable Long idMe
     ) {
-        return new ResponseEntity<>(postsService.getPost(id,idMe), HttpStatus.OK);
+        return new ResponseEntity<>(postsService.getPost(id, idMe), HttpStatus.OK);
     }
 
     @GetMapping("/search")

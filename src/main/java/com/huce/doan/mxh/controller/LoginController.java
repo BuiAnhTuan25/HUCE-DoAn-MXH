@@ -4,7 +4,6 @@ import com.huce.doan.mxh.model.dto.LoginResponse;
 import com.huce.doan.mxh.model.dto.UpdatePasswordDto;
 import com.huce.doan.mxh.model.dto.UserRegister;
 import com.huce.doan.mxh.model.dto.UsersDto;
-import com.huce.doan.mxh.model.response.Data;
 import com.huce.doan.mxh.model.response.Response;
 import com.huce.doan.mxh.security.CustomUserDetails;
 import com.huce.doan.mxh.security.jwt.JwtTokenProvider;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
 
 @CrossOrigin
 @RestController
