@@ -1,22 +1,32 @@
 package com.huce.doan.mxh.service.impl;
 
+import com.huce.doan.mxh.constains.MessageStatusEnum;
+import com.huce.doan.mxh.constains.MessageTypeEnum;
 import com.huce.doan.mxh.model.dto.LikesDto;
+import com.huce.doan.mxh.model.dto.MessagesDto;
+import com.huce.doan.mxh.model.dto.NotificationsDto;
 import com.huce.doan.mxh.model.entity.LikesEntity;
+import com.huce.doan.mxh.model.entity.MessagesEntity;
+import com.huce.doan.mxh.model.entity.NotificationsEntity;
 import com.huce.doan.mxh.model.entity.PostsEntity;
 import com.huce.doan.mxh.model.response.Data;
 import com.huce.doan.mxh.model.response.ListData;
 import com.huce.doan.mxh.model.response.Pagination;
 import com.huce.doan.mxh.model.response.Response;
 import com.huce.doan.mxh.repository.LikesRepository;
+import com.huce.doan.mxh.repository.MessagesRepository;
+import com.huce.doan.mxh.repository.NotificationsRepository;
 import com.huce.doan.mxh.repository.PostsRepository;
 import com.huce.doan.mxh.service.LikesService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -25,8 +35,10 @@ import java.util.Optional;
 public class LikesServiceImpl implements LikesService {
     private final LikesRepository likesRepository;
     private final PostsRepository postsRepository;
+    private final NotificationsRepository notificationsRepository;
     private final ModelMapper mapper;
     private final Response response;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public ListData getByPostId(Long id, int page, int pageSize) {
@@ -40,9 +52,20 @@ public class LikesServiceImpl implements LikesService {
     public Data createLike(LikesDto like) {
         LikesEntity likesEntity = new LikesEntity().mapperLikesDto(like);
         likesEntity=likesRepository.save(likesEntity);
-        PostsEntity post = postsRepository.getById(likesEntity.getPostId());
+        PostsEntity post = postsRepository.findById(likesEntity.getPostId()).get();
         post.setCountLikes(post.getCountLikes()+1);
         postsRepository.save(post);
+        if(!post.getAuthorId().equals(likesEntity.getUserId())){
+            NotificationsEntity notification = new NotificationsEntity();
+            notification.setContent("Someone liked your post");
+            notification.setReceiverId(post.getAuthorId());
+            notification.setPostId(post.getId());
+            notification.setSendTime(LocalDateTime.now());
+            notification.setStatus(MessageStatusEnum.NOT_SEEN);
+            NotificationsDto notificationsDto = mapper.map(notificationsRepository.save(notification), NotificationsDto.class);
+
+            simpMessagingTemplate.convertAndSend("/topic/notification/"+notificationsDto.getReceiverId(),notificationsDto);
+        }
 
         return response.responseData("Create like successfully", mapper.map(likesEntity, LikesDto.class));
     }

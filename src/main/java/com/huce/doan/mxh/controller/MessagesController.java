@@ -2,6 +2,7 @@ package com.huce.doan.mxh.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.huce.doan.mxh.constains.MessageStatusEnum;
 import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.service.MessagesService;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @CrossOrigin
@@ -40,6 +43,20 @@ public class MessagesController {
             @RequestParam(name = "page-size") int pageSize
     ) {
         return new ResponseEntity<>(messagesService.getByReceiverId(receiverId, page, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/not-seen/{receiverId}")
+    public ResponseEntity<?> getListMessageNotSeen(
+            @PathVariable Long receiverId
+    ) {
+        return new ResponseEntity<>(messagesService.getListMessageNotSeen(receiverId), HttpStatus.OK);
+    }
+
+    @GetMapping("/notification/{receiverId}")
+    public ResponseEntity<?> getListNotificationNotSeen(
+            @PathVariable Long receiverId
+    ) {
+        return new ResponseEntity<>(messagesService.getListNotificationNotSeen(receiverId), HttpStatus.OK);
     }
 
     @GetMapping("/friend-chat/{id}")
@@ -85,5 +102,13 @@ public class MessagesController {
         MessagesDto msgSave = (MessagesDto) messagesService.createMessage(messagesDto).getData();
         simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getSenderId(),msgSave);
         simpMessagingTemplate.convertAndSend("/topic/receiver/"+messagesDto.getReceiverId(),msgSave);
+    }
+
+    @PutMapping("/list")
+    public ResponseEntity<?> updateMessageStatus(
+            @RequestBody List<Long> listId
+    ){
+        return new ResponseEntity<>(messagesService.updateMessageStatus(listId),HttpStatus.OK);
+
     }
 }

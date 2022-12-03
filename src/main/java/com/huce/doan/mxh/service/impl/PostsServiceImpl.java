@@ -38,8 +38,15 @@ public class PostsServiceImpl implements PostsService {
     }
 
     @Override
-    public ListData getMyPosts(Long id, int page, int pageSize) {
-        Page<PostsDto> posts = postsRepository.getMyPosts(id, PageRequest.of(page, pageSize));
+    public ListData search(Long id, String content, int page, int pageSize) {
+        Page<PostsDto> posts = postsRepository.search(id, content, PageRequest.of(page, pageSize));
+        return response.responseListData(posts.getContent(), new Pagination(posts.getNumber(), posts.getSize(), posts.getTotalPages(),
+                (int) posts.getTotalElements()));
+    }
+
+    @Override
+    public ListData getPosts(Long authorId, Long id, int page, int pageSize) {
+        Page<PostsDto> posts = postsRepository.getMyPosts(authorId, id, PageRequest.of(page, pageSize));
 
         return response.responseListData(posts.getContent(), new Pagination(posts.getNumber(), posts.getSize(), posts.getTotalPages(),
                 (int) posts.getTotalElements()));

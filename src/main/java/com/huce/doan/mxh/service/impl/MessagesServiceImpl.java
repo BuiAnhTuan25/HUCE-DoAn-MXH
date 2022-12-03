@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.service.impl;
 
+import com.huce.doan.mxh.constains.MessageStatusEnum;
 import com.huce.doan.mxh.model.dto.FriendChatDto;
 import com.huce.doan.mxh.model.dto.MessagesDto;
 import com.huce.doan.mxh.model.entity.MessagesEntity;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +44,20 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
+    public Data getListMessageNotSeen(Long receiverId){
+        List<MessagesDto> friendChatDto = messagesRepository.getListMessageNotSeen(receiverId);
+
+        return response.responseData("Get list message not seen successfully",friendChatDto);
+    }
+
+    @Override
+    public Data getListNotificationNotSeen(Long receiverId){
+        List<MessagesDto> friendChatDto = messagesRepository.getListNotificationNotSeen(receiverId);
+
+        return response.responseData("Get list notification not seen successfully",friendChatDto);
+    }
+
+    @Override
     public ListData findFriendChat(Long id, String fullTextSearch, int page, int pageSize){
         Page<FriendChatDto> friendChatDto = messagesRepository.findFriendChat(id, fullTextSearch, PageRequest.of(page, pageSize));
 
@@ -61,6 +77,7 @@ public class MessagesServiceImpl implements MessagesService {
     public Data createMessage(MessagesDto message) {
         MessagesEntity messagesEntity = new MessagesEntity().mapperMessagesDto(message);
         messagesEntity.setSendTime(LocalDateTime.now());
+        messagesEntity.setMessageStatus(MessageStatusEnum.NOT_SEEN);
         messagesEntity = messagesRepository.save(messagesEntity);
 
         message.setId(messagesEntity.getId());
@@ -77,5 +94,11 @@ public class MessagesServiceImpl implements MessagesService {
             messagesRepository.deleteById(id);
             return response.responseData("Delete message successfully", mapper.map(data, MessagesDto.class));
         }).orElseGet(() -> response.responseError("Entity not found"));
+    }
+
+    @Override
+    public Data updateMessageStatus(List<Long> listId){
+        messagesRepository.updateMessageStatus(listId);
+        return response.responseData("Update message status successfully",null);
     }
 }

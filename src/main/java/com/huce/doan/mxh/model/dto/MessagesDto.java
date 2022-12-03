@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.huce.doan.mxh.constains.MessageStatusEnum;
 import com.huce.doan.mxh.constains.MessageTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,8 +41,22 @@ public class MessagesDto {
     @JsonProperty("message_type")
     private MessageTypeEnum messageType;
 
+    @JsonProperty("message_status")
+    private MessageStatusEnum messageStatus;
+
+
     private String name;
 
     @JsonProperty("avatar_url")
     private String avatarUrl;
+
+    public MessagesDto(Long id, Long receiverId, Long senderId, String content, LocalDateTime sendTime, MessageTypeEnum messageType, MessageStatusEnum messageStatus) {
+        this.id = id;
+        this.receiverId = receiverId;
+        this.senderId = senderId;
+        this.content = content;
+        this.sendTime = sendTime;
+        this.messageType = messageType;
+        this.messageStatus = messageStatus;
+    }
 }

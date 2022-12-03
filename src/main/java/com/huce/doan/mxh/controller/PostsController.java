@@ -4,6 +4,7 @@ import com.huce.doan.mxh.model.dto.PostsDto;
 import com.huce.doan.mxh.service.PostsService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,24 @@ public class PostsController {
         return new ResponseEntity<>(postsService.getPost(id,idMe), HttpStatus.OK);
     }
 
-    @GetMapping("/author-id/{id}")
-    public ResponseEntity<?> getByAuthorId(
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam("id") Long id,
+            @RequestParam("content") String content,
+            @RequestParam("page") int page,
+            @RequestParam("page-size") int pageSize
+    ) {
+        return new ResponseEntity<>(postsService.search(id, content, page, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/author-id/{authorId}/{id}")
+    public ResponseEntity<?> getPosts(
+            @PathVariable Long authorId,
             @PathVariable Long id,
             @RequestParam(name = "page") int page,
             @RequestParam(name = "page-size") int pageSize
     ) {
-        return new ResponseEntity<>(postsService.getMyPosts(id, page, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(postsService.getPosts(authorId, id, page, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/news-feed/{id}")

@@ -2,6 +2,7 @@ package com.huce.doan.mxh.service;
 
 import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
+import com.huce.doan.mxh.model.dto.ProfileSearchRequest;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
 import com.huce.doan.mxh.model.response.Data;
 import com.huce.doan.mxh.model.response.ListData;
@@ -9,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProfilesService {
     Data getProfile(Long id);
+
+    ListData search(ProfileSearchRequest request, int page, int pageSize);
 
     Data findByPhoneNumber(String phoneNumber);
 

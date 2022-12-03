@@ -42,6 +42,9 @@ public class PostsDto {
     @JsonProperty("privacy")
     private PrivacyEnum privacy;
 
+    @JsonProperty("is_share")
+    private Boolean isShare;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
@@ -52,7 +55,7 @@ public class PostsDto {
     @JsonProperty("is_like")
     private Boolean isLike;
 
-    public PostsDto(Long id, Long authorId, String name, String avatarUrl, String content, String pictureUrl, Integer countLikes, PrivacyEnum privacy, LocalDateTime postingTime, Long likeId) {
+    public PostsDto(Long id, Long authorId, String name, String avatarUrl, String content, String pictureUrl, Integer countLikes, PrivacyEnum privacy,Boolean isShare, LocalDateTime postingTime, Long likeId) {
         this.id=id;
         this.authorId=authorId;
         this.name=name;
@@ -61,6 +64,7 @@ public class PostsDto {
         this.pictureUrl=pictureUrl;
         this.countLikes=countLikes;
         this.privacy=privacy;
+        this.isShare=isShare;
         this.postingTime=postingTime;
         this.isLike= likeId != null;
     }

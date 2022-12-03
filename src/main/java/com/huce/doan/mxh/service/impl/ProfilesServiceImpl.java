@@ -6,6 +6,7 @@ import com.huce.doan.mxh.constains.ActiveStatusEnum;
 import com.huce.doan.mxh.constains.MessageTypeEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.MessagesDto;
+import com.huce.doan.mxh.model.dto.ProfileSearchRequest;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
 import com.huce.doan.mxh.model.entity.MessagesEntity;
 import com.huce.doan.mxh.model.entity.ProfilesEntity;
@@ -14,6 +15,7 @@ import com.huce.doan.mxh.model.response.ListData;
 import com.huce.doan.mxh.model.response.Pagination;
 import com.huce.doan.mxh.model.response.Response;
 import com.huce.doan.mxh.repository.ProfilesRepository;
+import com.huce.doan.mxh.repository.custom.ProfilesRepositoryCustom;
 import com.huce.doan.mxh.service.ProfilesService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,14 +25,17 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ProfilesServiceImpl implements ProfilesService {
 
     private final ProfilesRepository profilesRepository;
+    private final ProfilesRepositoryCustom profilesRepositoryCustom;
     private final ModelMapper mapper;
     private final Response response;
     private final Cloudinary cloudinary;
@@ -42,6 +47,15 @@ public class ProfilesServiceImpl implements ProfilesService {
 
         return profilesEntity.map(data -> response.responseData("Get profile successfully", mapper.map(data, ProfilesDto.class)))
                 .orElseGet(() -> response.responseError("Entity not found"));
+    }
+
+    @Override
+    public ListData search(ProfileSearchRequest request, int page, int pageSize) {
+        List<ProfilesEntity> profiles = profilesRepositoryCustom.search(request, page, pageSize);
+        List<ProfilesDto> profilesDto = profiles.stream().map(p -> this.mapper.map(p, ProfilesDto.class)).collect(Collectors.toList());
+        int total = profilesRepositoryCustom.count(request).intValue();
+        int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
+        return new ListData(true, "Search profile successfully",200, profilesDto, new Pagination(page, pageSize, totalPage, total));
     }
 
     @Override
@@ -63,6 +77,7 @@ public class ProfilesServiceImpl implements ProfilesService {
     public Data createProfile(ProfilesDto profile, MultipartFile avatar) {
         ProfilesEntity profilesEntity = new ProfilesEntity().mapperProfilesDto(profile);
         profilesEntity.setStatus(StatusEnum.ACTIVE);
+        profilesEntity.setActiveStatus(ActiveStatusEnum.OFFLINE);
         if (avatar != null) {
             try {
                 Map x = this.cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));

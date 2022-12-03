@@ -1,7 +1,9 @@
 package com.huce.doan.mxh.controller;
 
 import com.huce.doan.mxh.constains.ActiveStatusEnum;
+import com.huce.doan.mxh.constains.GenderEnum;
 import com.huce.doan.mxh.constains.StatusEnum;
+import com.huce.doan.mxh.model.dto.ProfileSearchRequest;
 import com.huce.doan.mxh.model.dto.ProfilesDto;
 import com.huce.doan.mxh.service.ProfilesService;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,20 @@ public class ProfilesController {
             @PathVariable Long id
     ) {
         return new ResponseEntity<>(profilesService.getProfile(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam(value = "id-me", required = false) Long idMe,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "phone-number", required = false) String phoneNumber,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "gender", required = false) GenderEnum gender,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam("page") int page,
+            @RequestParam("page-size") int pageSize
+            ) {
+        return new ResponseEntity<>(profilesService.search(new ProfileSearchRequest(idMe, name, phoneNumber, address, gender, sortBy), page, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/phone-number")

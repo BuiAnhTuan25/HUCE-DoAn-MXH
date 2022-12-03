@@ -79,7 +79,7 @@ public class LoginSocialController {
     }
 
     public TokenDto addToken(UsersEntity user){
-        CustomUserDetails userDetails=new CustomUserDetails(user);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
         String jwt = tokenProvider.generateToken(userDetails);
         return new TokenDto(jwt);
     }

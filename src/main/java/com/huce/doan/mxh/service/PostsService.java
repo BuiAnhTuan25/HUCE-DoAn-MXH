@@ -9,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 public interface PostsService {
     Data getPost(Long id, Long idMe);
 
-    ListData getMyPosts(Long userId, int page, int pageSize);
+    ListData search(Long id, String content, int page, int pageSize);
+
+    ListData getPosts(Long authorId, Long userId, int page, int pageSize);
 
     ListData getNewsFeed(Long userId, int page, int pageSize);
 

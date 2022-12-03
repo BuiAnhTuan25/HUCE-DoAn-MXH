@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum MessageTypeEnum {
-    MESSAGE(0),
-    ACTIVE_STATUS(2);
+public enum MessageStatusEnum {
+    SEEN(0),
+    NOT_SEEN(1);
 
-    private final int type;
+    private final int value;
 }

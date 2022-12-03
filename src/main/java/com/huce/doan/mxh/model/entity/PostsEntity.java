@@ -43,6 +43,9 @@ public class PostsEntity {
     @Column(name = "privacy")
     private PrivacyEnum privacy;
 
+    @Column(name = "is_share")
+    private Boolean isShare;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd hh:mm:ss")
@@ -58,6 +61,7 @@ public class PostsEntity {
         this.privacy = posts.getPrivacy();
         this.postingTime = posts.getPostingTime();
         this.countLikes = posts.getCountLikes();
+        this.isShare = posts.getIsShare();
 
         return this;
     }
