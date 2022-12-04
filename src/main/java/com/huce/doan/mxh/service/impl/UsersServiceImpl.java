@@ -54,6 +54,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public Data createUser(UserRegister user, StringBuffer siteUrl) throws MessagingException {
         Optional<UsersEntity> optional = usersRepository.findByUsername(user.getUsername());
         if (optional.isPresent()) return response.responseError("Username already exists");
@@ -81,6 +82,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public Data updateUser(UsersDto user, Long id) {
         user.setId(id);
         Optional<UsersEntity> userEntity = usersRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
@@ -89,6 +91,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public Data deleteUser(Long id) {
         Optional<UsersEntity> userEntity = usersRepository.findById(id);
 
@@ -119,6 +122,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UsersEntity processOAuthPostLogin(UsersEntity userEntity, ProviderEnum provider) {
         UsersEntity existEmail = usersRepository.findByEmail(userEntity.getEmail());
         if (existEmail == null) {
@@ -168,6 +172,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public Data verify(String verificationCode) {
         Optional<UsersEntity> optionalUser = usersRepository.findByVerificationCode(verificationCode);
         if (!optionalUser.isPresent()) return response.responseError("Verification code not found");
@@ -180,6 +185,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public Data forgotPassword(String mail) throws MessagingException {
         UsersEntity user = usersRepository.findByEmail(mail);
         if (user == null) return response.responseError("Email not found");
@@ -198,6 +204,7 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public Data changePassword(Long id, UpdatePasswordDto passwordDto) {
         Optional<UsersEntity> usersEntity = usersRepository.findById(id);
 

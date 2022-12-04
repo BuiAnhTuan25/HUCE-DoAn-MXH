@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +44,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
+    @Transactional
     public Data createNotification(NotificationsDto notification) {
         NotificationsEntity notificationEntity = new NotificationsEntity().mapperNotificationsDto(notification);
         notificationEntity.setSendTime(LocalDateTime.now());
@@ -52,6 +54,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
+    @Transactional
     public Data deleteNotification(Long id) {
         Optional<NotificationsEntity> notification = notificationsRepository.findById(id);
 
@@ -62,12 +65,14 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
+    @Transactional
     public Data updateNotificationStatus(List<Long> listId){
         notificationsRepository.updateStatus(listId);
         return response.responseData("Update notification status successfully",null);
     }
 
     @Override
+    @Transactional
     public Data updateNotificationStatus(Long id, NotificationsDto notification){
         Optional<NotificationsEntity> notificationEntity = notificationsRepository.findById(id);
         return notificationEntity.map(data -> {

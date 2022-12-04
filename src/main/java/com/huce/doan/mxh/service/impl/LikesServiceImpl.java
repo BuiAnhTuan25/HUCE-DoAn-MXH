@@ -53,6 +53,7 @@ public class LikesServiceImpl implements LikesService {
     }
 
     @Override
+    @Transactional
     public Data createLike(LikesDto like) {
         LikesEntity likesEntity = new LikesEntity().mapperLikesDto(like);
         likesEntity=likesRepository.save(likesEntity);
@@ -76,6 +77,7 @@ public class LikesServiceImpl implements LikesService {
     }
 
     @Override
+    @Transactional
     public Data deleteLike(Long postId, Long userId) {
         Optional<LikesEntity> likesEntity = likesRepository.findByPostIdAndUserId(postId, userId);
         if(likesEntity.isPresent()){
