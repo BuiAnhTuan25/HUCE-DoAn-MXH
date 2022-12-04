@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -83,6 +84,7 @@ public class ProfilesServiceImpl implements ProfilesService {
     }
 
     @Override
+    @Transactional
     public Data createProfile(ProfilesDto profile, MultipartFile avatar) {
         ProfilesEntity profilesEntity = new ProfilesEntity().mapperProfilesDto(profile);
         profilesEntity.setStatus(StatusEnum.ACTIVE);
@@ -103,6 +105,7 @@ public class ProfilesServiceImpl implements ProfilesService {
     }
 
     @Override
+    @Transactional
     public Data updateProfile(ProfilesDto profile, MultipartFile avatar, Long id) {
         profile.setId(id);
         Optional<ProfilesEntity> profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
@@ -123,6 +126,7 @@ public class ProfilesServiceImpl implements ProfilesService {
 
     }
     @Override
+    @Transactional
     public Data updateActiveStatus(Long id, ActiveStatusEnum activeStatus){
         Optional<ProfilesEntity> profilesEntity = profilesRepository.findById(id);
 
@@ -139,6 +143,7 @@ public class ProfilesServiceImpl implements ProfilesService {
     }
 
     @Override
+    @Transactional
     public Data deleteProfile(Long id) {
         Optional<ProfilesEntity> profilesEntity = profilesRepository.findByIdAndStatus(id, StatusEnum.ACTIVE);
 

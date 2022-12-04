@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -61,6 +62,7 @@ public class PostsServiceImpl implements PostsService {
     }
 
     @Override
+    @Transactional
     public Data createPost(PostsDto post, MultipartFile picture) {
         PostsEntity postsEntity = new PostsEntity().mapperPostsDto(post);
         postsEntity.setPostingTime(LocalDateTime.now());
@@ -79,6 +81,7 @@ public class PostsServiceImpl implements PostsService {
     }
 
     @Override
+    @Transactional
     public Data updatePost(PostsDto post, MultipartFile picture, Long id) {
         post.setId(id);
         Optional<PostsEntity> postsEntity = postsRepository.findById(id);
@@ -102,6 +105,7 @@ public class PostsServiceImpl implements PostsService {
     }
 
     @Override
+    @Transactional
     public Data deletePost(Long id) {
         Optional<PostsEntity> postsEntity = postsRepository.findById(id);
 

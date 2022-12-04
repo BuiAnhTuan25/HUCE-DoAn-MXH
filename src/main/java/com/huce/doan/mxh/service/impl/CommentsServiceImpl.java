@@ -26,6 +26,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -58,6 +59,7 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
+    @Transactional
     public Data createComment(CommentsDto comment, MultipartFile picture) {
         CommentsEntity commentsEntity = new CommentsEntity().mapperCommentsDto(comment);
         commentsEntity.setCommentTime(LocalDateTime.now());
@@ -95,6 +97,7 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
+    @Transactional
     public Data updateComment(CommentsDto comment, MultipartFile picture, Long id) {
         comment.setId(id);
         Optional<CommentsEntity> commentsEntity = commentsRepository.findById(id);
@@ -115,6 +118,7 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
+    @Transactional
     public Data deleteComment(Long id) {
         Optional<CommentsEntity> commentsEntity = commentsRepository.findById(id);
 

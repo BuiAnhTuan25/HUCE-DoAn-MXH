@@ -71,10 +71,10 @@ public class FriendsServiceImpl implements FriendsService {
         friendsEntity1.setFriendStatus(FriendStatusEnum.CONFIRM);
         friendsRepository.save(friendsEntity1);
 
-        ProfilesEntity profile = profilesRepository.findById(friendsEntity.getFriendId()).get();
+        ProfilesEntity profile = profilesRepository.findById(friendsEntity.getMeId()).get();
         NotificationsEntity notification = new NotificationsEntity();
-        notification.setContent(profile.getName() + " wants to make friends with you");
-        notification.setReceiverId(profile.getId());
+        notification.setContent(profile.getName() + " sent you a friend request");
+        notification.setReceiverId(friend.getFriendId());
         notification.setFriendId(profile.getId());
         notification.setSendTime(LocalDateTime.now());
         notification.setStatus(MessageStatusEnum.NOT_SEEN);
@@ -85,6 +85,7 @@ public class FriendsServiceImpl implements FriendsService {
 }
 
     @Override
+    @Transactional
     public Data updateFriend(FriendsDto friend, Long id) {
         friend.setId(id);
         Optional<FriendsEntity> friendsEntity = friendsRepository.findById(id);
@@ -92,11 +93,22 @@ public class FriendsServiceImpl implements FriendsService {
             FriendsEntity friendConfirm = friendsRepository.findByMeIdAndFriendId(friend.getFriendId(), friend.getMeId()).get();
             friendConfirm.setFriendStatus(FriendStatusEnum.FRIENDED);
             friendsRepository.save(friendConfirm);
+
+            ProfilesEntity profile = profilesRepository.findById(friend.getMeId()).get();
+            NotificationsEntity notification = new NotificationsEntity();
+            notification.setContent(profile.getName() + " accepted the friend request");
+            notification.setReceiverId(friend.getFriendId());
+            notification.setFriendId(profile.getId());
+            notification.setSendTime(LocalDateTime.now());
+            notification.setStatus(MessageStatusEnum.NOT_SEEN);
+            NotificationsDto notificationsDto = mapper.map(notificationsRepository.save(notification), NotificationsDto.class);
+            simpMessagingTemplate.convertAndSend("/topic/notification/" + notificationsDto.getReceiverId(), notificationsDto);
         }
         return friendsEntity.map(data -> response.responseData("Update friend successfully", mapper.map(friendsRepository.save(data.mapperFriendsDto(friend)), FriendsDto.class))).orElseGet(() -> response.responseError("Entity not found"));
     }
 
     @Override
+    @Transactional
     public Data deleteFriend(Long id) {
         Optional<FriendsEntity> friendsEntity = friendsRepository.findById(id);
 

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -74,6 +75,7 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
+    @Transactional
     public Data createMessage(MessagesDto message) {
         MessagesEntity messagesEntity = new MessagesEntity().mapperMessagesDto(message);
         messagesEntity.setSendTime(LocalDateTime.now());
@@ -87,6 +89,7 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
+    @Transactional
     public Data deleteMessage(Long id) {
         Optional<MessagesEntity> messagesEntity = messagesRepository.findById(id);
 
@@ -97,6 +100,7 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
+    @Transactional
     public Data updateMessageStatus(List<Long> listId){
         messagesRepository.updateMessageStatus(listId);
         return response.responseData("Update message status successfully",null);
