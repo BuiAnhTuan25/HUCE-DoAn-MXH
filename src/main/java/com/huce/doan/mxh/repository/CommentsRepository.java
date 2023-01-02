@@ -15,7 +15,7 @@ public interface CommentsRepository extends JpaRepository<CommentsEntity, Long> 
     Page<CommentsEntity> findByPostId(@Param("post_id") Long postId, Pageable pageable);
 
     @Query("select new com.huce.doan.mxh.model.dto.CommentsDto(c.id,c.postId,c.userId,c.content,c.pictureUrl,c.commentTime,p.name,p.avatarUrl) " +
-            " from CommentsEntity c join ProfilesEntity p on c.userId=p.id where c.postId=:postId order by c.commentTime desc")
+            " from CommentsEntity c join ProfilesEntity p on c.userId=p.id where c.postId=:postId and c.status = 1 order by c.commentTime desc")
     Page<CommentsDto> getListCommentByPostId(@Param("postId") Long postId, Pageable pageable);
 
 }

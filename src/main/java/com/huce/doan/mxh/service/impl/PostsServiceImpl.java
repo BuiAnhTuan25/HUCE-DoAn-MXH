@@ -2,6 +2,7 @@ package com.huce.doan.mxh.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.PostsDto;
 import com.huce.doan.mxh.model.entity.PostsEntity;
 import com.huce.doan.mxh.model.response.Data;
@@ -66,6 +67,7 @@ public class PostsServiceImpl implements PostsService {
     public Data createPost(PostsDto post, MultipartFile picture) {
         PostsEntity postsEntity = new PostsEntity().mapperPostsDto(post);
         postsEntity.setPostingTime(LocalDateTime.now());
+        postsEntity.setStatus(StatusEnum.ACTIVE);
 
         if (picture != null) {
             try {
@@ -110,7 +112,8 @@ public class PostsServiceImpl implements PostsService {
         Optional<PostsEntity> postsEntity = postsRepository.findById(id);
 
         return postsEntity.map(data -> {
-            postsRepository.deleteById(id);
+            data.setStatus(StatusEnum.INACTIVE);
+            postsRepository.save(data);
 
             return response.responseData("Delete post successfully", mapper.map(data, PostsDto.class));
         }).orElseGet(() -> response.responseError("Entity not found"));

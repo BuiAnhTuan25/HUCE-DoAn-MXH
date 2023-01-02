@@ -1,5 +1,6 @@
 package com.huce.doan.mxh.model.entity;
 
+import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.CommentsDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +36,9 @@ public class CommentsEntity {
 
     @Column(name = "comment_time")
     private LocalDateTime commentTime;
+
+    @Column(name = "status")
+    private StatusEnum status;
 
     public CommentsEntity mapperCommentsDto(CommentsDto comment){
         this.id = comment.getId();

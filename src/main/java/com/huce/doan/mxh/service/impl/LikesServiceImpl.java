@@ -46,7 +46,7 @@ public class LikesServiceImpl implements LikesService {
 
     @Override
     public ListData getByPostId(Long id, int page, int pageSize) {
-        Page<LikesEntity> likes = likesRepository.findByPostId(id, PageRequest.of(page, pageSize));
+        Page<LikesDto> likes = likesRepository.findByPostId(id, PageRequest.of(page, pageSize));
 
         return response.responseListData(likes.getContent(), new Pagination(likes.getNumber(), likes.getSize(), likes.getTotalPages(),
                 (int) likes.getTotalElements()));
