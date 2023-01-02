@@ -3,6 +3,7 @@ package com.huce.doan.mxh.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.huce.doan.mxh.constains.MessageStatusEnum;
+import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.CommentsDto;
 import com.huce.doan.mxh.model.dto.NotificationsDto;
 import com.huce.doan.mxh.model.entity.CommentsEntity;
@@ -63,6 +64,7 @@ public class CommentsServiceImpl implements CommentsService {
     public Data createComment(CommentsDto comment, MultipartFile picture) {
         CommentsEntity commentsEntity = new CommentsEntity().mapperCommentsDto(comment);
         commentsEntity.setCommentTime(LocalDateTime.now());
+        commentsEntity.setStatus(StatusEnum.ACTIVE);
 
         if (picture != null) {
             try {
@@ -123,7 +125,8 @@ public class CommentsServiceImpl implements CommentsService {
         Optional<CommentsEntity> commentsEntity = commentsRepository.findById(id);
 
         return commentsEntity.map(data -> {
-            commentsRepository.deleteById(id);
+            data.setStatus(StatusEnum.INACTIVE);
+            commentsRepository.save(data);
             return response.responseData("Delete comment successfully", mapper.map(data, CommentsDto.class));
         }).orElseGet(() -> response.responseError("Entity not found"));
     }

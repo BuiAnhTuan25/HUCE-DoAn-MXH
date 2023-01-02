@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.huce.doan.mxh.constains.PrivacyEnum;
+import com.huce.doan.mxh.constains.StatusEnum;
 import com.huce.doan.mxh.model.dto.PostsDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,6 +53,9 @@ public class PostsEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Column(name = "posting_time")
     private LocalDateTime postingTime;
+
+    @Column(name = "status")
+    private StatusEnum status;
 
     public PostsEntity mapperPostsDto(PostsDto posts) {
         this.id = posts.getId();

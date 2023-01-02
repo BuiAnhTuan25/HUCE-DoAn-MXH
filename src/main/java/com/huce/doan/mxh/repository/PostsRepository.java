@@ -24,14 +24,14 @@ public interface PostsRepository extends JpaRepository<PostsEntity, Long> {
 //    Page<PostsDto> getMyPosts(@Param("authorId") Long authorId, Pageable pageable);
 
     @Query("select new com.huce.doan.mxh.model.dto.PostsDto(o.id,o.authorId,p.name,p.avatarUrl,o.content,o.pictureUrl,o.countLikes,o.privacy,o.isShare,o.postingTime,l.id) "
-            +" FROM PostsEntity o join ProfilesEntity p on o.authorId=p.id left join LikesEntity l on o.id = l.postId and l.userId=:id where o.authorId =:authorId order by o.postingTime desc")
+            +" FROM PostsEntity o join ProfilesEntity p on o.authorId=p.id left join LikesEntity l on o.id = l.postId and l.userId=:id where o.status = 1 and o.authorId =:authorId order by o.postingTime desc")
     Page<PostsDto> getMyPosts(@Param("authorId") Long authorId, @Param("id") Long id, Pageable pageable);
     @Query("SELECT new com.huce.doan.mxh.model.dto.PostsDto(o.id,o.authorId,p.name,p.avatarUrl,o.content,o.pictureUrl,o.countLikes,o.privacy,o.isShare,o.postingTime,false) " +
-            " FROM PostsEntity o left join LikesEntity l on o.id = l.postId and l.userId =:id join ProfilesEntity p on o.authorId=p.id where l.id is null and (o.privacy = 0 or o.authorId =:id or ( o.privacy = 1 and o.authorId in (select f.friendId from FriendsEntity f where f.meId=:id))) order by o.postingTime desc")
+            " FROM PostsEntity o left join LikesEntity l on o.id = l.postId and l.userId =:id join ProfilesEntity p on o.authorId=p.id where o.status = 1 and l.id is null and (o.privacy = 0 or o.authorId =:id or ( o.privacy = 1 and o.authorId in (select f.friendId from FriendsEntity f where f.meId=:id))) order by o.postingTime desc")
     Page<PostsDto> getNewsFeed(@Param("id") Long id, Pageable pageable);
 
     @Query("SELECT new com.huce.doan.mxh.model.dto.PostsDto(o.id,o.authorId,p.name,p.avatarUrl,o.content,o.pictureUrl,o.countLikes,o.privacy,o.isShare,o.postingTime,l.id) " +
-            " FROM PostsEntity o left join LikesEntity l on o.id = l.postId and l.userId =:id join ProfilesEntity p on o.authorId=p.id where o.content like '%'||:content||'%' order by o.postingTime desc")
+            " FROM PostsEntity o left join LikesEntity l on o.id = l.postId and l.userId =:id join ProfilesEntity p on o.authorId=p.id where o.status = 1 and o.content like '%'||:content||'%' order by o.postingTime desc")
 
     Page<PostsDto> search(@Param("id") Long id, @Param("content") String content, Pageable pageable);
 }

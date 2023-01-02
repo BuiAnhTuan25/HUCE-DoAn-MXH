@@ -18,4 +18,9 @@ public class LikesDto {
 
     @JsonProperty("user_id")
     private Long userId;
+
+    private String name;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 }
