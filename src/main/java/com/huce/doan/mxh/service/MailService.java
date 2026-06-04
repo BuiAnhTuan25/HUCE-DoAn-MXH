@@ -1,6 +1,6 @@
 package com.huce.doan.mxh.service;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import java.util.Map;
 
 public interface MailService {

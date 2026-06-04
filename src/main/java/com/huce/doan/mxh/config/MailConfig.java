@@ -9,7 +9,7 @@
 //import org.springframework.mail.javamail.MimeMessagePreparator;
 //import org.thymeleaf.spring5.SpringTemplateEngine;
 //
-//import javax.mail.internet.MimeMessage;
+//import jakarta.mail.internet.MimeMessage;
 //import java.io.InputStream;
 //
 //@Configuration

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.time.LocalDate;
 
 @AllArgsConstructor
