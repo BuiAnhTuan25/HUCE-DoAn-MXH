@@ -3,7 +3,7 @@ package com.huce.doan.mxh.controller;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.huce.doan.mxh.constains.ProviderEnum;
 import com.huce.doan.mxh.model.dto.LoginResponse;
 import com.huce.doan.mxh.model.dto.TokenDto;
@@ -17,19 +17,18 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.User;
-import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
 @RequestMapping("api/v1/auth-social")
 public class LoginSocialController {
-    @Value("${spring.security.oauth2.client.registration.google.clientId}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String googleClientId;
 
     private final UsersService userService;
@@ -50,7 +49,7 @@ public class LoginSocialController {
     @PostMapping("/google")
     public ResponseEntity<?> google(@RequestBody TokenDto tokenDto) throws IOException {
         final NetHttpTransport transport = new NetHttpTransport();
-        final JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
+        final GsonFactory jacksonFactory = GsonFactory.getDefaultInstance();
         GoogleIdTokenVerifier.Builder verifier =
                 new GoogleIdTokenVerifier.Builder(transport, jacksonFactory)
                         .setAudience(Collections.singletonList(googleClientId));
@@ -65,17 +64,40 @@ public class LoginSocialController {
     }
 
     @PostMapping("/facebook")
-    public ResponseEntity<?> facebook(@RequestBody TokenDto tokenDto) {
-        Facebook facebook = new FacebookTemplate(tokenDto.getValue());
-        final String [] fields = {"email","name"};
-        User user = facebook.fetchObject("me", User.class, fields);
-        UsersEntity usersEntity = new UsersEntity();
-        usersEntity.setEmail(user.getEmail());
-        usersEntity.setUsername(user.getName());
-        usersEntity=userService.processOAuthPostLogin(usersEntity, ProviderEnum.FACEBOOK);
-        TokenDto tokenRes = addToken(usersEntity);
-        return new ResponseEntity<>(response.responseData("Login with facebook successfully",new LoginResponse("Bearer " + tokenRes.getValue(), mapper.map(usersEntity, UsersDto.class))),HttpStatus.OK);
+    public ResponseEntity<?> facebook(
+            @RequestBody TokenDto tokenDto) {
 
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url =
+                "https://graph.facebook.com/me" +
+                        "?fields=id,name,email" +
+                        "&access_token=" + tokenDto.getValue();
+
+        Map<String, Object> userInfo =
+                restTemplate.getForObject(url, Map.class);
+
+        UsersEntity usersEntity = new UsersEntity();
+
+        usersEntity.setEmail((String) userInfo.get("email"));
+        usersEntity.setUsername((String) userInfo.get("name"));
+
+        usersEntity =
+                userService.processOAuthPostLogin(
+                        usersEntity,
+                        ProviderEnum.FACEBOOK);
+
+        TokenDto tokenRes = addToken(usersEntity);
+
+        return ResponseEntity.ok(
+                response.responseData(
+                        "Login with facebook successfully",
+                        new LoginResponse(
+                                "Bearer " + tokenRes.getValue(),
+                                mapper.map(usersEntity, UsersDto.class)
+                        )
+                )
+        );
     }
 
     public TokenDto addToken(UsersEntity user){

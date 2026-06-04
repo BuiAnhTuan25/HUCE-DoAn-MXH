@@ -2,10 +2,13 @@ package com.huce.doan.mxh.security.jwt;
 
 import com.huce.doan.mxh.security.CustomUserDetails;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -34,17 +37,28 @@ public class JwtTokenProvider {
 
     // Lấy thông tin user từ jwt
     public Long getUserIdFromJWT(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(
+                JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+
         Claims claims = Jwts.parser()
-                .setSigningKey(JWT_SECRET)
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
 
         return Long.parseLong(claims.getSubject());
     }
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(authToken);
+            SecretKey key = Keys.hmacShaKeyFor(
+                    JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+
+            Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(authToken)
+                    .getPayload();
             return true;
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");

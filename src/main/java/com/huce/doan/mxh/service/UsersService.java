@@ -8,7 +8,7 @@ import com.huce.doan.mxh.model.entity.UsersEntity;
 import com.huce.doan.mxh.model.response.Data;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 public interface UsersService {
     Data getUser(Long id);
