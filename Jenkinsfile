@@ -48,10 +48,10 @@ static GString fillImgTag(BRANCH_NAME) {
 
     environment {
         // SonarQube
-        SONAR_PROJECT_KEY = 'Do-An-MXH'
+        SONAR_PROJECT_KEY = 'social-service'
 
         // Docker
-        DOCKER_IMAGE     = 'buianhtuan25/do-an-mxh'
+        DOCKER_IMAGE     = 'buianhtuan25/social-service'
         IMAGE_TAG        = fillImgTag(env.GIT_BRANCH)
 
         // Kubernetes
