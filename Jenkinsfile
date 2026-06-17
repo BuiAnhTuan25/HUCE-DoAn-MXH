@@ -1,10 +1,3 @@
-pipeline {
-    agent any
-
-    tools {
-        jdk 'JDK-21'
-    }
-
 static def fillEnv(BRANCH_NAME) {
     def env = "dev"
     switch (BRANCH_NAME) {
@@ -45,6 +38,13 @@ static GString fillImgTag(BRANCH_NAME) {
 
     return tag
 }
+
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK-21'
+    }
 
     environment {
         // SonarQube
@@ -88,7 +88,7 @@ static GString fillImgTag(BRANCH_NAME) {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 5, unit: 'MUNITES') {
+                timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
@@ -104,7 +104,7 @@ static GString fillImgTag(BRANCH_NAME) {
         stage('Push image') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials'
+                    credentialsId: 'dockerhub-credentials',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
